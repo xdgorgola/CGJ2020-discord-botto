@@ -67,6 +67,8 @@ client.on('message', async message => {
             reaction_msg,
             conf.roles_table_path);
     }
+    else if (command === 'acepto')
+        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.entry_role_id, conf.accepted_role_id);
     else if (command === 'admin')
         client.commands.get('admin').execute(message, args, conf.admin_id);
     else if (command === 'clear' && isRole(message.author, message.guild, conf.admin_id))
@@ -150,9 +152,13 @@ client.on('messageReactionRemove', async (re, us) => {
 
 
 client.on('guildMemberAdd', async (guildUser) => {
-    let welcome = `Hola ** ${guildUser.user.username} **! Bienvenido al servidor.\n`
+
+    await guildUser.roles.add(conf.entry_role_id).catch(err => {});
+    
+    var welcome = `Hola ** ${guildUser.user.username} **! Bienvenido al servidor.\n`
     welcome += welcome_msg;
-    await guildUser.send(welcome).catch((err) => {
+    
+    await guildUser.send(welcome).catch(err => {
         console.log("Intentar mandar mensajes a los admins!");
     });
 });
@@ -160,7 +166,7 @@ client.on('guildMemberAdd', async (guildUser) => {
 
 
 function isRole(user, guild, roleID) {
-    return (guild.roles.fetch(roleID)).then((r) => {
+    return (guild.roles.fetch(roleID)).then(r => {
         return r.members.has(user.id);
     })
 }

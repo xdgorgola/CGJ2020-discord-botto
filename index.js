@@ -1,17 +1,24 @@
 "use strict";
 
-const fs = require('fs');
+const userJoinRuleEvent = require('./events/joinUserEvent.js');
+const roleReactionEvent = require('./events/roleReactEvent.js');
+
+const conf = require('./resources/config.json');
+const utils = require('./utils/utils.js');
 const Discord = require('discord.js');
-const conf = require('./config.json');
+const fs = require('fs');
 
 const prefix = conf.prefix;
 const token = conf.token;
 
-// create a new discord client
-const client = new Discord.Client({ partials: ['MESSAGE', 'GUILD_MEMBER', 'REACTION', 'USER'] });
+// Create a new discord client
+const client = new Discord.Client({   
+    partials: ['MESSAGE', 'GUILD_MEMBER', 'REACTION', 'USER'], 
+    ws: { intents: Discord.Intents.ALL } });
 
 client.commands = new Discord.Collection();
 
+// Loading command files
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -25,6 +32,7 @@ const reactRolesData = {
     reactionMap: new Map(),
 }
 
+// Loading messages files
 var welcome_msg = 'Welcome!';
 var reaction_msg = 'React here!';
 
@@ -36,7 +44,6 @@ reaction_msg = fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
 });
 
 
-
 // once client is ready, log Ready!
 client.once('ready', () => {
     console.log('Ready!');
@@ -45,11 +52,21 @@ client.once('ready', () => {
 
 
 // logint to discord with your app's token
-client.login(token).catch((error) => {
-    console.error(`Error login:\n${error}`);
-})
+try
+{
+    client.login(token);
+    console.log(`Successfully logged into the server`);
+}
+catch
+{
+    console.log(`Error login into the server`);
+}
 
+userJoinRuleEvent.entryRoleEvent(client, conf.entry_role_id);
+userJoinRuleEvent.welcomeMessageEvent(client, welcome_msg);
 
+roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
+roleReactionEvent.rolerReactAddEvent(client, reactRolesData);
 
 client.on('message', async message => {
 
@@ -68,10 +85,10 @@ client.on('message', async message => {
             conf.roles_table_path);
     }
     else if (command === 'acepto')
-        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.entry_role_id, conf.accepted_role_id);
+        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.entry_role_id);
     else if (command === 'admin')
         client.commands.get('admin').execute(message, args, conf.admin_id);
-    else if (command === 'clear' && isRole(message.author, message.guild, conf.admin_id))
+    else if (command === 'clear' && utils.hasRole(message.author, message.guild, conf.admin_id))
         client.commands.get('clear').execute(message, args);
     else if (command == `refresh`)
         client.commands.get('refresh').execute(
@@ -81,97 +98,6 @@ client.on('message', async message => {
             reactRolesData,
             conf.roles_table_path);
 });
-
-
-
-client.on('messageReactionAdd', async (re, us) => {
-    if (reactRolesData.channelID === undefined || reactRolesData.messageID === undefined ||
-        !re.message.guild || us.bot)
-        return;
-
-    try {
-        const validReactions = reactRolesData.reactionMap;
-        var roleIDToAdd = null;
-
-        if (re.emoji.id != null)
-            roleIDToAdd = validReactions.get(re.emoji.id);
-        else
-            roleIDToAdd = validReactions.get(re.emoji.toString());
-
-        var role = re.message.guild.roles.cache.get(roleIDToAdd);
-
-        console.log(re.emoji.toString());
-        await re.message.channel.send("Emoji string: " + re.emoji.toString());
-        await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
-
-        if (!role) {
-            console.log("Wrong emoji!");
-            await re.remove()
-            return;
-        }   
-
-        await re.message.guild.member(us).roles.add(role);
-
-        console.log(reactRolesData.channelID);
-        console.log(reactRolesData.messageID);
-    }
-    catch (error) {
-        await re.users.remove(us);
-        await us.send(
-            "Hola! Mi bot se crasheo :( ...\n" +
-            "¿Podrías mandarme un dm para solventarlo?\n" +
-            "PD: Soy nuevo haciendo bots.\nAtt~ Gorgola");
-    }
-});
-
-
-
-client.on('messageReactionRemove', async (re, us) => {
-    if (!reactRolesData.channelID || !reactRolesData.messageID ||
-        !re.message.guild || us.bot)
-        return;
-
-    const validReactions = reactRolesData.reactionMap;
-    let roleToRemove = null;
-
-    if (re.emoji.id != null)
-        roleToRemove = validReactions.get(re.emoji.id);
-    else
-        roleToRemove = validReactions.get(re.emoji.toString());
-
-    console.log(re.emoji.toString());
-    await re.message.channel.send("Emoji string: " + re.emoji.toString());
-    await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
-
-    await re.message.guild.member(us).roles.remove(roleToRemove);
-
-    console.log(reactRolesData.channelID);
-    console.log(reactRolesData.messageID);
-});
-
-
-
-client.on('guildMemberAdd', async (guildUser) => {
-
-    await guildUser.roles.add(conf.entry_role_id).catch(err => {});
-    
-    var welcome = `Hola ** ${guildUser.user.username} **! Bienvenido al servidor.\n`
-    welcome += welcome_msg;
-    
-    await guildUser.send(welcome).catch(err => {
-        console.log("Intentar mandar mensajes a los admins!");
-    });
-});
-
-
-
-function isRole(user, guild, roleID) {
-    return (guild.roles.fetch(roleID)).then(r => {
-        return r.members.has(user.id);
-    })
-}
-
-
 
 async function fileToText(path, def_mes, fallback = true) {
     var msg = def_mes;

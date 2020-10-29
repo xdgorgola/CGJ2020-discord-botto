@@ -4,14 +4,16 @@ module.exports = {
     name: 'acepto',
     description: 'Acepta las reglas del servidor',
     /**
-     * @param {Discord.message} message Mensaje comando
+     * @param {Discord.Message} message Mensaje comando
      * @param {string} entry_channel_id ID canal de reglas
-     * @param {*} accepted_id ID rol aceptado reglas
-     * @param {*} entry_id ID rol de entrada
+     * @param {string} entry_id ID rol de entrada
      */
-    async execute(message, entry_channel_id, entry_id, accepted_id) {
+    async execute(message, entry_channel_id, entry_id) {
         if (message.channel.id !== entry_channel_id)
+        {
+            console.log(`Canal ${message.channel.name} no es el de reglas`);
             return;
+        }
         
         const guildUser = message.guild.members.resolve(message.author);
         
@@ -20,7 +22,6 @@ module.exports = {
             return;
         
         guildUser.roles.remove(entry_id);
-        guildUser.roles.add(accepted_id);
 
         var done = false;
         for (var i = 0; i < 5 && !done; ++i)

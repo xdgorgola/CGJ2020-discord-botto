@@ -1,3 +1,4 @@
+const utils = require('../utils/utils.js');
 const Discord = require('discord.js');
 const fs = require('fs');
 
@@ -5,7 +6,7 @@ module.exports = {
     name: 'reaction',
     description: 'React to assign roles!',
     /**
-     * @param {Discord.message} message Command
+     * @param {Discord.Message} message Command
      * @param {string[]} args Command args
      * @param {Object} message_object Objeto con informacion de emoji/roles
      * @param {string} reaction_message Contenido de mensaje a reaccionar
@@ -21,8 +22,19 @@ module.exports = {
         
         
         // Restarting/Initializing Roles <--> Reaction object data
-        const reactMessage = await message.channel.send(reaction_message);
-        const reactChannel = await message.channel;
+        try 
+        {
+            const reactMessage = await message.channel.send(reaction_message);
+        }
+        catch (err)
+        {
+            console.log(`Problem sending reaction message`)
+            await message.channel.send(`There was a problem setting up` + 
+            `the reaction message.`).catch(err => {});
+            return;
+        }
+
+        const reactChannel = message.channel;
         message_object.channelID = reactChannel.id;
         message_object.messageID = reactMessage.id;
         message_object.reactionMap.clear();
@@ -34,10 +46,10 @@ module.exports = {
 
             // Extracting emoji from message.
             var emojiID = -1;
-            if (this.isCustom(args[ie])) {
-                emojiID = this.extractCustomID(args[ie]);
-                await message.channel.send("Custom emoji ID: " + emojiID);
-                await message.channel.send(args[ie]);
+            if (utils.isCustom(args[ie])) {
+                emojiID = utils.extractCustomID(args[ie]);
+                await message.channel.send("Custom emoji ID: " + emojiID).catch(err => {});
+                await message.channel.send(args[ie]).catch(err => {});
             }
             else {
                 emojiID = args[ie];
@@ -46,20 +58,29 @@ module.exports = {
 
 
             // Reacting to the message
-            await reactMessage.react(emojiID).catch(async (error) => {
+            try 
+            {
+                await reactMessage.react(emojiID)
+            } 
+            catch (err) 
+            {
                 console.log(error);
-                await message.channel.send("That's not an emoji!");
-                return undefined;
-            });
+                await message.channel.send(`Problem reacting with ${emojiID}.\n` + 
+                `Probably non valid emoji`).catch(err => {});
+                return;
+            }
 
 
             // Extracting role from message
             var role = null;
             try {
-                await message.channel.send("Role ID: " + args[ir]);
-                role = await message.guild.roles.fetch(args[ir]);
-                await message.channel.send("Role name: " + role.name);
-            } catch (error) {
+                await message.channel.send("Role ID: " + args[ir]).catch(err => {});
+                // Previously fetch.
+                role = message.guild.roles.resolve(args[ir]);
+                await message.channel.send("Role name: " + role.name).catch(err => {});
+            } 
+            catch (error) 
+            {
                 console.log(error);
                 console.log(`${args[ir]} no es un rol valido.`)
                 await message.channel.send(`${args[ir]} no es un rol valido.`).catch(err => {});
@@ -72,32 +93,17 @@ module.exports = {
         // Generating JSON with Roles <--> Reaction data for
         // crash recovering purposes
         var toJsonify = { datas: [] }
-        message_object.reactionMap.forEach((role, emoji) => {
-            toJsonify.datas.push({ emojiID: emoji, roleID: role });
-        });
-        fs.writeFile(path, JSON.stringify(toJsonify), (err) => { });
-    },
-
-
-    /**
-     * @summary Identifies a custom emoji
-     * @param {string} emoji Emoji data received from a message
-     */
-    isCustom(emoji) {
-        return emoji.startsWith("\\<");
-    },
-
-
-    /**
-     * @summary Extracts ID from a custom emoji
-     * @param {string} customID Emoji full format 
-     */
-    extractCustomID(customID) {
-        try {
-            const cust = customID.split(':')[2];
-            return cust.slice(0, cust.length - 1);
-        } catch (error) {
-            return undefined
+        try 
+        {
+            message_object.reactionMap.forEach((role, emoji) => {
+                toJsonify.datas.push({ emojiID: emoji, roleID: role });
+            });
+            fs.writeFile(path, JSON.stringify(toJsonify), () => console.log(`Role file created successfuly`));
+        }
+        catch (error)
+        {
+            console.warn(`Role backup file failed to generate. Try using the command again.` +
+            `\nIf not, beware of bot crashes or try creating your own file.`);
         }
     },
 };

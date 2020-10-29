@@ -5,11 +5,11 @@ module.exports = {
     name: 'refresh',
     description: 'Refresh roles message',
     /**
+     * @param {object} reactionMessageObject
      * @param {Discord.Message} message 
+     * @param {string} reactionMapPath
      * @param {string} messageID
      * @param {string} channelID
-     * @param {object} reactionMessageObject
-     * @param {string} reactionMapPath
      */
     async execute(message, messageID, channelID, reactionMessageObject, reactionMapPath) {
         const guild = message.guild;
@@ -18,6 +18,8 @@ module.exports = {
         /** @type {Discord.TextChannel} */
         const channel = guild.channels.resolve(channelID);
         const msgManager = channel.messages;
+        // Fetching because this cmd is used in case the bot crashes and 
+        // its probably going to be an uncached msg
         const old_msg = await msgManager.fetch(messageID);
 
         console.log(`Old message content:\n\"${old_msg.content}\"`);
@@ -76,9 +78,9 @@ module.exports = {
          */
         const processUser = (user, react, role) => {
             if (!react.users.cache.has(user.id) && user.roles.cache.has(role.id))
-            user.roles.remove(role);
+                user.roles.remove(role);
             else if (react.users.cache.has(user.id) && !user.roles.cache.has(role.id))
-            user.roles.add(role);
+                user.roles.add(role);
         };
         
         

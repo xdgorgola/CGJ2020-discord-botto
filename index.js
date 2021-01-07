@@ -16,6 +16,7 @@ const client = new Discord.Client({
     partials: ['MESSAGE', 'GUILD_MEMBER', 'REACTION', 'USER'], 
     ws: { intents: Discord.Intents.ALL } });
 
+/** @type {Discord.Collection} */
 client.commands = new Discord.Collection();
 
 // Loading command files
@@ -26,35 +27,54 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
+
 const reactRolesData = {
     channelID: conf.roles_msg_channel,
     messageID: conf.roles_msg_id,
-    reactionMap: new Map(),
-}
+    reactionMap: new Map(),}
+
 
 // Loading messages files
 var welcome_msg = 'Welcome!';
 var reaction_msg = 'React here!';
 
-welcome_msg = fileToText(conf.welcome_path, welcome_msg).then((data) => {
-    welcome_msg = data;
-});
+
 reaction_msg = fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
     reaction_msg = data;
 });
 
 
+/** @type {Discord.Guild}*/
+var guild = undefined;
+/** @type {Discord.RoleManager}*/
+var guildRoleManager = undefined;
+/** @type {Discord.Role} */
+var lookingForTeamRole = undefined;
+/** @type {Map}*/
+var mainRolesMap = new Map();
+
 // once client is ready, log Ready!
 client.once('ready', () => {
     console.log('Ready!');
+    const tempMainRoles = require('./resources/main_roles.json');
+    guild = client.guilds.resolve(conf.guild_id);
+    guildRoleManager = guild.roles;
+    for (const mainRole of tempMainRoles.data) {
+        mainRole.role_data.role = guildRoleManager.resolve(mainRole.role_data.role_id);
+        mainRole.role_data.search_role = guildRoleManager.resolve(mainRole.role_data.search_role_id);
+        mainRolesMap.set(mainRole.name, mainRole);
+    }
+    
+    lookingForTeamRole = guildRoleManager.resolve("774035277156581406");
 });
-
 
 
 // logint to discord with your app's token
 try
 {
-    client.login(token);
+    client.login(token).then((trash) => {
+        
+    });
     console.log(`Successfully logged into the server`);
 }
 catch
@@ -62,11 +82,25 @@ catch
     console.log(`Error login into the server`);
 }
 
-userJoinRuleEvent.entryRoleEvent(client, conf.entry_role_id);
-userJoinRuleEvent.welcomeMessageEvent(client, welcome_msg);
+
+// Esto es un filtrar usuarios y ya
+
+initializeWelcomeMessageEvent();
 
 roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
 roleReactionEvent.rolerReactAddEvent(client, reactRolesData);
+
+client.on('message', async message => {
+    if (message.author.bot || !message.guild)
+        return;
+
+    if (message.channel.id === conf.entry_channel_id)
+    {
+        if (message.content.trim() !== '!acepto')
+            message.delete().catch(r => {});
+    }
+});
+
 
 client.on('message', async message => {
 
@@ -76,7 +110,8 @@ client.on('message', async message => {
     const args = message.content.slice(prefix.length).trim().split(/\s+/);
     const command = args.shift().toLowerCase();
 
-    if (command == 'reaction') {
+    if (command == 'reaction' && utils.hasRole(message.author, message.guild, conf.admin_id)) 
+    {
         client.commands.get('reaction').execute(
             message,
             args,
@@ -85,12 +120,12 @@ client.on('message', async message => {
             conf.roles_table_path);
     }
     else if (command === 'acepto')
-        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.entry_role_id);
-    else if (command === 'admin')
-        client.commands.get('admin').execute(message, args, conf.admin_id);
+        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.accepted_role_id);
     else if (command === 'clear' && utils.hasRole(message.author, message.guild, conf.admin_id))
-        client.commands.get('clear').execute(message, args);
-    else if (command == `refresh`)
+        client.commands.get('clear').execute(message, args, conf.admin_id);
+    else if (command == 'crear_grupo' && utils.hasRole(message.author, message.guild, conf.admin_id))
+        client.commands.get('crear_grupo').execute(message, args, [conf.accepted_role_id]);
+    else if (command == `refresh` && utils.hasRole(message.author, message.guild, conf.admin_id))
         client.commands.get('refresh').execute(
             message,
             conf.roles_msg_id,
@@ -98,6 +133,29 @@ client.on('message', async message => {
             reactRolesData,
             conf.roles_table_path);
 });
+
+client.on('message', async message => {
+
+    if (!message.content.startsWith(prefix) || message.author.bot || message.guild)
+        return;
+
+    const args = message.content.slice(prefix.length).trim().split(/\s+/);
+    const command = args.shift().toLowerCase();
+
+    if (command == `buscar_rol`)
+        client.commands.get('buscar_rol').execute(message, args, mainRolesMap, guild, lookingForTeamRole);
+    else if (command == 'buscar_equipo')
+        client.commands.get('buscar_equipo').execute(message, args, mainRolesMap, guild);
+    else if (command === 'admin')
+    {
+        if (guild.member(message.author))
+        {
+            client.commands.get('admin').execute(message, args, conf.admin_id, guild);
+        }
+    }
+});
+
+
 
 async function fileToText(path, def_mes, fallback = true) {
     var msg = def_mes;
@@ -108,4 +166,14 @@ async function fileToText(path, def_mes, fallback = true) {
         if (error.code != 'ENOENT' || !fallback) throw error;
     }
     return msg;
+}
+
+async function initializeWelcomeMessageEvent()
+{
+    await fileToText(conf.welcome_path, welcome_msg).then((data) => {
+        welcome_msg = data;
+    }).catch(r => console.log("No se pudo inicializar mensaje de bienvenida por: " + 
+    "\n" + r));
+
+    userJoinRuleEvent.welcomeMessageEvent(client, welcome_msg);
 }

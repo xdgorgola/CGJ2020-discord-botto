@@ -21,10 +21,11 @@ module.exports = {
         }
         
         
+        var reactMessage;
         // Restarting/Initializing Roles <--> Reaction object data
         try 
         {
-            const reactMessage = await message.channel.send(reaction_message);
+            reactMessage = await message.channel.send(reaction_message);
         }
         catch (err)
         {
@@ -48,8 +49,8 @@ module.exports = {
             var emojiID = -1;
             if (utils.isCustom(args[ie])) {
                 emojiID = utils.extractCustomID(args[ie]);
-                await message.channel.send("Custom emoji ID: " + emojiID).catch(err => {});
-                await message.channel.send(args[ie]).catch(err => {});
+                //await message.channel.send("Custom emoji ID: " + emojiID).catch(err => {});
+                //await message.channel.send(args[ie]).catch(err => {});
             }
             else {
                 emojiID = args[ie];
@@ -64,9 +65,11 @@ module.exports = {
             } 
             catch (err) 
             {
-                console.log(error);
-                await message.channel.send(`Problem reacting with ${emojiID}.\n` + 
-                `Probably non valid emoji`).catch(err => {});
+                console.log(err);
+                console.log(`Problem reacting with ${emojiID}.\n` + 
+                `Probably non valid emoji`);
+                //await message.channel.send(`Problem reacting with ${emojiID}.\n` + 
+                //`Probably non valid emoji`).catch(err => {});
                 return;
             }
 
@@ -74,16 +77,16 @@ module.exports = {
             // Extracting role from message
             var role = null;
             try {
-                await message.channel.send("Role ID: " + args[ir]).catch(err => {});
+                //await message.channel.send("Role ID: " + args[ir]).catch(err => {});
                 // Previously fetch.
                 role = message.guild.roles.resolve(args[ir]);
-                await message.channel.send("Role name: " + role.name).catch(err => {});
+                //await message.channel.send("Role name: " + role.name).catch(err => {});
             } 
             catch (error) 
             {
                 console.log(error);
                 console.log(`${args[ir]} no es un rol valido.`)
-                await message.channel.send(`${args[ir]} no es un rol valido.`).catch(err => {});
+                //await message.channel.send(`${args[ir]} no es un rol valido.`).catch(err => {});
                 return;
             }
             message_object.reactionMap.set(emojiID, role.id);
@@ -92,7 +95,7 @@ module.exports = {
 
         // Generating JSON with Roles <--> Reaction data for
         // crash recovering purposes
-        var toJsonify = { datas: [] }
+        var toJsonify = { datas: [], message_id: reactMessage.id, channel_id: reactChannel.id, }
         try 
         {
             message_object.reactionMap.forEach((role, emoji) => {

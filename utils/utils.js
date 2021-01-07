@@ -13,6 +13,21 @@ module.exports = {
         });
     },
     /**
+     * @summary Retorna lista con usuarios que tienen los roles pasados
+     * @param {Discord.Guild} guild Guild asociado al rol
+     * @param {Discord.Role[]} roles Roles a checkear
+     * @param {boolean} without Indica si se deben o no tener los roles
+     */
+    usersWithRole(guild, roles, without = false)
+    {
+        if (!without)
+            return guild.members.cache.array().filter(gm => 
+                roles.filter(r => r.members.has(gm.id)).length === roles.length);
+        else
+            return guild.members.cache.array().filter(gm => 
+                roles.filter(r => !r.members.has(gm.id)).length === roles.length);
+    },
+    /**
      * @summary Identifies a custom emoji
      * @param {string} emoji Emoji string data received from a message
      */

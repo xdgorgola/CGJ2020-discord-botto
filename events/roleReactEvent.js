@@ -12,6 +12,13 @@ module.exports = {
                 !re.message.guild || us.bot)
                 return;
         
+            if (reactRolesData.channelID !== re.message.channel.id || 
+                reactRolesData.messageID !== re.message.id)
+            {
+                console.log("Ignorar reaccion");
+                return;
+            }
+
             try 
             {
                 const validReactions = reactRolesData.reactionMap;
@@ -24,9 +31,9 @@ module.exports = {
         
                 var role = re.message.guild.roles.cache.get(roleIDToAdd);
         
-                console.log(re.emoji.toString());
-                await re.message.channel.send("Emoji string: " + re.emoji.toString());
-                await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
+                //console.log(re.emoji.toString());
+                //await re.message.channel.send("Emoji string: " + re.emoji.toString());
+                //await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
         
                 if (!role) {
                     console.log("Wrong emoji!");
@@ -58,7 +65,14 @@ module.exports = {
             if (!reactRolesData.channelID || !reactRolesData.messageID ||
                 !re.message.guild || us.bot)
                 return;
-        
+            
+            if (reactRolesData.channelID !== re.message.channel.id || 
+                reactRolesData.messageID !== re.message.id)
+            {
+                console.log("Ignorar reaccion");
+                return;
+            }
+
             const validReactions = reactRolesData.reactionMap;
             var roleToRemove = null;
         
@@ -68,8 +82,8 @@ module.exports = {
                 roleToRemove = validReactions.get(re.emoji.toString());
         
             console.log(re.emoji.toString());
-            await re.message.channel.send("Emoji string: " + re.emoji.toString());
-            await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
+            //await re.message.channel.send("Emoji string: " + re.emoji.toString());
+            //await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
         
             await re.message.guild.member(us).roles.remove(roleToRemove);
         

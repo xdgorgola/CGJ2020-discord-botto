@@ -6,9 +6,9 @@ module.exports = {
     /**
      * @param {Discord.Message} message Mensaje comando
      * @param {string} entry_channel_id ID canal de reglas
-     * @param {string} entry_id ID rol de entrada
+     * @param {string} accepted_id ID rol de entrada
      */
-    async execute(message, entry_channel_id, entry_id) {
+    async execute(message, entry_channel_id, accepted_id) {
         if (message.channel.id !== entry_channel_id)
         {
             console.log(`Canal ${message.channel.name} no es el de reglas`);
@@ -21,7 +21,7 @@ module.exports = {
         if (guildUser.roles.cache.has(accepted_id))
             return;
         
-        guildUser.roles.remove(entry_id);
+        guildUser.roles.add(accepted_id);
 
         var done = false;
         for (var i = 0; i < 5 && !done; ++i)

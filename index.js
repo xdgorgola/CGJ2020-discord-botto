@@ -3,10 +3,11 @@
 const userJoinRuleEvent = require('./events/joinUserEvent.js');
 const roleReactionEvent = require('./events/roleReactEvent.js');
 
-const conf = require('./resources/config.json');
+const conf  = require('./resources/config.json');
 const utils = require('./utils/utils.js');
+const scheduled_messages = require(`./resources/${conf.scheduled_messages_file}`);
 const Discord = require('discord.js');
-const fs = require('fs');
+const fs      = require('fs');
 
 const prefix = conf.prefix;
 const token = conf.token;
@@ -66,7 +67,29 @@ client.once('ready', () => {
     }
     
     lookingForTeamRole = guildRoleManager.resolve("774035277156581406");
+
+    // Set up scheduled messages
+    if (!conf.scheduled_messages_channel) return;
+
+    console.log("Scheduling messages:")
+    for(const m of scheduled_messages.messages) {
+        // milliseconds between scheduled date and now
+        const timeToWait = new Date(m.date) - Date.now();
+
+        if (timeToWait < 0) // message already send or scheduled to some time in the past
+            continue;
+
+        console.log("   * Scheduling message '\u001b[36m" + m.title + "\u001b[0m' to \u001b[32m" + m.date + "\u001b[0m");
+
+        // Set timeout to wait for 'timeToWait' milliseconds to send message
+        setTimeout(() => {
+            const channel  = client.channels.cache.get(conf.scheduled_messages_channel);
+            channel.send(m.message + " link: " + m.link);
+        }, timeToWait)
+
+    }
 });
+
 
 
 // logint to discord with your app's token

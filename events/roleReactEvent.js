@@ -15,7 +15,7 @@ module.exports = {
             if (reactRolesData.channelID !== re.message.channel.id ||
                 reactRolesData.messageID !== re.message.id)
             {
-                console.log("Ignorar reaccion");
+                console.log("Ignorar reacción: messageReactionAdd");
                 return;
             }
 
@@ -69,7 +69,7 @@ module.exports = {
             if (reactRolesData.channelID !== re.message.channel.id ||
                 reactRolesData.messageID !== re.message.id)
             {
-                console.log("Ignorar reaccion");
+                console.log("Ignorar reaccion: messageReactionRemove");
                 return;
             }
 
@@ -77,9 +77,9 @@ module.exports = {
             var roleToRemove = null;
 
             if (re.emoji.id != null)
-                roleToRemove = validReactions.get(re.emoji.id);
+                roleToRemove = validReactions[re.emoji.id];
             else
-                roleToRemove = validReactions.get(re.emoji.toString());
+                roleToRemove = validReactions[re.emoji.toString()];
 
             console.log(re.emoji.toString());
             //await re.message.channel.send("Emoji string: " + re.emoji.toString());

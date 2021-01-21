@@ -13,8 +13,8 @@ const prefix = conf.prefix;
 const token = conf.token;
 
 // Create a new discord client
-const client = new Discord.Client({   
-    partials: ['MESSAGE', 'GUILD_MEMBER', 'REACTION', 'USER'], 
+const client = new Discord.Client({
+    partials: ['MESSAGE', 'GUILD_MEMBER', 'REACTION', 'USER'],
     ws: { intents: Discord.Intents.ALL } });
 
 /** @type {Discord.Collection} */
@@ -28,11 +28,18 @@ for (const file of commandFiles) {
     client.commands.set(command.name, command);
 }
 
+// Creating the map
+const reactionMap = {}
+const reactionData = require("./" + conf.roles_table_path)
+for (const react of reactionData.datas) {
+    reactionMap[react.emojiID] = react.roleID
+}
 
 const reactRolesData = {
     channelID: conf.roles_msg_channel,
     messageID: conf.roles_msg_id,
-    reactionMap: new Map(),}
+    reactionMap: reactionMap
+}
 
 
 // Loading messages files
@@ -65,7 +72,7 @@ client.once('ready', () => {
         mainRole.role_data.search_role = guildRoleManager.resolve(mainRole.role_data.search_role_id);
         mainRolesMap.set(mainRole.name, mainRole);
     }
-    
+
     lookingForTeamRole = guildRoleManager.resolve("774035277156581406");
 
     // Set up scheduled messages
@@ -96,7 +103,7 @@ client.once('ready', () => {
 try
 {
     client.login(token).then((trash) => {
-        
+
     });
     console.log(`Successfully logged into the server`);
 }
@@ -133,7 +140,7 @@ client.on('message', async message => {
     const args = message.content.slice(prefix.length).trim().split(/\s+/);
     const command = args.shift().toLowerCase();
 
-    if (command == 'reaction' && utils.hasRole(message.author, message.guild, conf.admin_id)) 
+    if (command == 'reaction' && utils.hasRole(message.author, message.guild, conf.admin_id))
     {
         client.commands.get('reaction').execute(
             message,
@@ -195,7 +202,7 @@ async function initializeWelcomeMessageEvent()
 {
     await fileToText(conf.welcome_path, welcome_msg).then((data) => {
         welcome_msg = data;
-    }).catch(r => console.log("No se pudo inicializar mensaje de bienvenida por: " + 
+    }).catch(r => console.log("No se pudo inicializar mensaje de bienvenida por: " +
     "\n" + r));
 
     userJoinRuleEvent.welcomeMessageEvent(client, welcome_msg);

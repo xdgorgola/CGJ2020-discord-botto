@@ -147,7 +147,7 @@ client.on('message', async message => {
     else if (command === 'clear' && utils.hasRole(message.author, message.guild, conf.admin_id))
         client.commands.get('clear').execute(message, args, conf.admin_id);
     else if (command == 'crear_grupo' && utils.hasRole(message.author, message.guild, conf.admin_id))
-        client.commands.get('crear_grupo').execute(message, args, [conf.accepted_role_id]);
+        client.commands.get('crear_grupo').execute(message, args, [conf.accepted_role_id, "784208251168358400"]);
     else if (command == `refresh` && utils.hasRole(message.author, message.guild, conf.admin_id))
         client.commands.get('refresh').execute(
             message,

@@ -1,0 +1,8 @@
+Por favor, **reacciona a este mensaje con uno de los siguientes emojis** para obtener tu rol!
+
+** ROLES DISPONIBLES**
+
+:paintbrush: **ARTISTA**
+:desktop: **PROGRAMADOR**
+:musical_note: **MÚSICO**
+:video_game: **DISEÑADOR**

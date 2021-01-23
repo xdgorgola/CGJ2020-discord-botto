@@ -17,6 +17,8 @@ module.exports = {
         
         if (!args.length)
         {
+            message.delete().catch(r => {console.log("Mensaje acepto no borrado")});
+            author.send("Por favor escribe !acepto (cedula)").catch(r => {console.log("Mensaje acepto no borrado")});
             return;
         }
 
@@ -26,13 +28,11 @@ module.exports = {
         // No debe ser posible. Fail-Safe just in case
         if (guildUser.roles.cache.has(accepted_id))
         {
-            console.log("hahaha salu3");
+            message.delete().catch(r => {console.log("Mensaje acepto no borrado")});
             return;
         }
         
         guildUser.roles.add(accepted_id);
-
-        console.log("hahaha salu2");
         const admins = guild.roles.resolve(adminRoleID).members;
         const author = message.author;
 

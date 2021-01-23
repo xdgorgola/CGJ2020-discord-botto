@@ -17,8 +17,8 @@ module.exports = {
         
         if (!args.length)
         {
+            message.author.send("Por favor escribe !acepto (cedula)").catch(r => {console.log("Mensaje no enviado :(")});
             message.delete().catch(r => {console.log("Mensaje acepto no borrado")});
-            author.send("Por favor escribe !acepto (cedula)").catch(r => {console.log("Mensaje acepto no borrado")});
             return;
         }
 

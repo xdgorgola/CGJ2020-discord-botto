@@ -143,7 +143,7 @@ client.on('message', async message => {
             conf.roles_table_path);
     }
     else if (command === 'acepto')
-        client.commands.get('acepto').execute(message, conf.entry_channel_id, conf.accepted_role_id);
+        client.commands.get('acepto').execute(message, args, conf.entry_channel_id, conf.accepted_role_id, conf.admin_id);
     else if (command === 'clear' && utils.hasRole(message.author, message.guild, conf.admin_id))
         client.commands.get('clear').execute(message, args, conf.admin_id);
     else if (command == 'crear_grupo' && utils.hasRole(message.author, message.guild, conf.admin_id))

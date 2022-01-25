@@ -56,8 +56,6 @@ reaction_msg = fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
 var guild = undefined;
 /** @type {Discord.RoleManager}*/
 var guildRoleManager = undefined;
-/** @type {Discord.Role} */
-var lookingForTeamRole = undefined;
 /** @type {Map}*/
 var mainRolesMap = new Map();
 
@@ -76,8 +74,6 @@ client.once("ready", () => {
     );
     mainRolesMap.set(mainRole.name, mainRole);
   }
-
-  lookingForTeamRole = guildRoleManager.resolve("774035277156581406");
 
   // Set up scheduled messages
   if (!conf.scheduled_messages_channel) return;
@@ -183,28 +179,7 @@ client.on("messageCreate", async (message) => {
         reactRolesData,
         conf.roles_table_path
       );
-});
-
-client.on("messageCreate", async (message) => {
-  if (
-    !message.content.startsWith(prefix) ||
-    message.author.bot ||
-    message.guild
-  )
-    return;
-
-  const args = message.content.slice(prefix.length).trim().split(/\s+/);
-  const command = args.shift().toLowerCase();
-
-  if (command == `buscar_rol`)
-    client.commands
-      .get("buscar_rol")
-      .execute(message, args, mainRolesMap, guild, lookingForTeamRole);
-  else if (command == "buscar_equipo")
-    client.commands
-      .get("buscar_equipo")
-      .execute(message, args, mainRolesMap, guild);
-  else if (command === "admin") {
+  } else if (command === "admin") {
     if (guild.member(message.author)) {
       client.commands.get("admin").execute(message, args, conf.admin_id, guild);
     }

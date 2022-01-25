@@ -37,6 +37,8 @@ module.exports = {
     /** @type {Discord.VoiceChannel} */
     const voiceChannel = await guild.channels.create(name, { type: "voice" });
 
+    // TODO FIXME: this is giving an error
+    console.log(category);
     await textChannel.setParent(category);
     await voiceChannel.setParent(category);
 

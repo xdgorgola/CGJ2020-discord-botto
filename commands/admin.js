@@ -9,9 +9,8 @@ module.exports = {
    * @param {Discord.Message} message Mensaje
    * @param {string[]} args Argumentos
    * @param {string} adminRoleID Role de los admin.
-   * @param {Discord.Guild} guild Guild a buscar admins
    */
-  async execute(message, args, adminRoleID, guild) {
+  async execute(message, args, adminRoleID) {
     if (!args.length) {
       await message.author
         .send(
@@ -28,12 +27,12 @@ module.exports = {
 
     await author
       .send(
-        `Un admin ya fue notificado y te contactara lo mas pronto posible!` +
-          `\nDisculpa las molestias.`
+        `Un admin ya fue notificado y te contactará lo mas pronto posible!` +
+          `\nDisculpa los inconvenientes.`
       )
       .catch(() => {});
 
-    const admins = guild.roles.resolve(adminRoleID).members;
+    const admins = message.guild.roles.resolve(adminRoleID).members;
     admins.forEach(async (guildMember) => {
       var done = false;
       for (var i = 0; i < 4 && !done; ) {

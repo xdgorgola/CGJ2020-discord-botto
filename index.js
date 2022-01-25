@@ -54,29 +54,9 @@ try {
   utils.logMessage("main", `Error login into the server!`);
 }
 
-var guild = undefined;
-var guildRoleManager = undefined;
-var mainRolesMap = new Map();
-
 // Once client is ready, we start everything!
 client.once("ready", () => {
   utils.logMessage("main", "Client ready!");
-
-  utils.logMessage;
-  const tempMainRoles = require("./resources/main_roles.json");
-  guild = client.guilds.resolve(conf.guild_id);
-  guildRoleManager = guild.roles;
-
-  // TODO(andres): do we need this?
-  for (const mainRole of tempMainRoles.data) {
-    mainRole.role_data.role = guildRoleManager.resolve(
-      mainRole.role_data.role_id
-    );
-    mainRole.role_data.search_role = guildRoleManager.resolve(
-      mainRole.role_data.search_role_id
-    );
-    mainRolesMap.set(mainRole.name, mainRole);
-  }
 
   // Set up scheduled messages
   if (!conf.scheduled_messages_channel) return;
@@ -186,8 +166,6 @@ client.on("messageCreate", async (message) => {
       .get("refresh")
       .execute(message, reactRolesData, conf.roles_table_path);
   } else if (command === "admin") {
-    if (guild.member(message.author)) {
-      client.commands.get("admin").execute(message, args, conf.admin_id, guild);
-    }
+    client.commands.get("admin").execute(message, args, conf.admin_id);
   }
 });

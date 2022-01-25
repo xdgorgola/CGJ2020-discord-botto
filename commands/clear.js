@@ -18,12 +18,7 @@ module.exports = {
       return;
     }
 
-    var isAdmin = await utils.hasRole(
-      message.author,
-      message.guild,
-      admin_role
-    );
-
+    var isAdmin = await utils.isAdmin(message.author, message.guild);
     if (!isAdmin) return;
 
     // Acounting for the command message!

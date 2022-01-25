@@ -1,17 +1,28 @@
 const Discord = require("discord.js");
+const conf = require("./resources/config.json");
 
 module.exports = {
   /**
-   *
-   * @param {Discord.User} user User to check role
-   * @param {Discord.Guild} guild Guild
-   * @param {string} roleID Role to check ID string
+   * Determina si un usuario pertenece a los administradores
+   * @param {Discord.User} user Usuario a revisar
+   * @param {Discord.Guild} guild Instancia del guild (servidor)
+   * @returns true o false dependiendo de si el usuario es admin
    */
-  hasRole(user, guild, roleID) {
-    return guild.roles.fetch(roleID).then((r) => {
-      return r.members.has(user.id);
-    });
+  async isAdmin(user, guild) {
+    return await this.hasRole(user, guild, conf.admin_id);
   },
+
+  /**
+   * @summary Determina si un usuario tiene un rol asignado
+   * @param {Discord.User} user Usuario a revisar
+   * @param {Discord.Guild} guild Instancia del guild (servidor)
+   * @returns true o false dependiendo de si el usuario tiene el rol asignado
+   */
+  async hasRole(user, guild, roleID) {
+    const role = await guild.roles.fetch(roleID);
+    return role.members.has(user.id);
+  },
+
   /**
    * @summary Retorna lista con usuarios que tienen los roles pasados
    * @param {Discord.Guild} guild Guild asociado al rol
@@ -34,6 +45,7 @@ module.exports = {
             roles.filter((r) => !r.members.has(gm.id)).length === roles.length
         );
   },
+
   /**
    * @summary Identifies a custom emoji
    * @param {string} emoji Emoji string data received from a message
@@ -41,6 +53,7 @@ module.exports = {
   isCustom(emoji) {
     return emoji.startsWith("\\<");
   },
+
   /**
    * @summary Extracts ID from a custom emoji
    * @param {string} customID Custom Emoji full format  <...>

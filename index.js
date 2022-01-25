@@ -144,11 +144,9 @@ client.on("message", async (message) => {
 
   const args = message.content.slice(prefix.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
+  const isAdmin = await utils.isAdmin(message.author, message.guild);
 
-  if (
-    command == "reaction" &&
-    utils.hasRole(message.author, message.guild, conf.admin_id)
-  ) {
+  if (command == "reaction" && isAdmin) {
     client.commands
       .get("reaction")
       .execute(
@@ -168,22 +166,13 @@ client.on("message", async (message) => {
         conf.accepted_role_id,
         conf.admin_id
       );
-  else if (
-    command === "clear" &&
-    utils.hasRole(message.author, message.guild, conf.admin_id)
-  )
+  else if (command === "clear" && isAdmin)
     client.commands.get("clear").execute(message, args, conf.admin_id);
-  else if (
-    command == "crear_grupo" &&
-    utils.hasRole(message.author, message.guild, conf.admin_id)
-  )
+  else if (command == "crear_grupo" && isAdmin)
     client.commands
       .get("crear_grupo")
       .execute(message, args, [conf.accepted_role_id, "784208251168358400"]);
-  else if (
-    command == `refresh` &&
-    utils.hasRole(message.author, message.guild, conf.admin_id)
-  )
+  else if (command == `refresh` && isAdmin)
     client.commands
       .get("refresh")
       .execute(

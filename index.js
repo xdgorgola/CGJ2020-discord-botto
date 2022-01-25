@@ -127,7 +127,7 @@ initializeWelcomeMessageEvent();
 roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
 roleReactionEvent.rolerReactAddEvent(client, reactRolesData);
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
 
   if (message.channel.id === conf.entry_channel_id) {
@@ -135,7 +135,7 @@ client.on("message", async (message) => {
   }
 });
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (
     !message.content.startsWith(prefix) ||
     message.author.bot ||
@@ -185,7 +185,7 @@ client.on("message", async (message) => {
       );
 });
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
   if (
     !message.content.startsWith(prefix) ||
     message.author.bot ||

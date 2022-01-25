@@ -46,10 +46,11 @@ module.exports = {
 
   /**
    * Imprime en la salida estandar un mensaje con el timestamp en que se emitió
+   * @param {string} category Tipo u origen del mensaje a registrar
    * @param {string} message Mensaje a registrar en los logs
    */
-  logMessage(message) {
+  logMessage(category, message) {
     const timestamp = new Date().toUTCString();
-    console.log(`[${timestamp}] ${message}`);
+    console.log(`[${timestamp}] [${category}] ${message}`);
   },
 };

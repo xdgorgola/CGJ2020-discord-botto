@@ -61,7 +61,7 @@ var mainRolesMap = new Map();
 
 // once client is ready, log Ready!
 client.once("ready", () => {
-  utils.logMessage("Ready!");
+  utils.logMessage("main", "Ready!");
   const tempMainRoles = require("./resources/main_roles.json");
   guild = client.guilds.resolve(conf.guild_id);
   guildRoleManager = guild.roles;
@@ -78,7 +78,7 @@ client.once("ready", () => {
   // Set up scheduled messages
   if (!conf.scheduled_messages_channel) return;
 
-  utils.logMessage("Scheduling messages:");
+  utils.logMessage("main", "Scheduling messages:");
   for (const m of scheduled_messages.messages) {
     // milliseconds between scheduled date and now
     const timeToWait = new Date(m.date) - Date.now();
@@ -88,6 +88,7 @@ client.once("ready", () => {
       continue;
 
     utils.logMessage(
+      "main",
       "   * Scheduling message '\u001b[36m" +
         m.title +
         "\u001b[0m' to \u001b[32m" +
@@ -103,20 +104,18 @@ client.once("ready", () => {
       channel.send(m.message + " link: " + m.link);
     }, timeToWait);
   }
-  utils.logMessage("Messages scheduled!");
+  utils.logMessage("main", "Messages scheduled!");
 });
 
 // logint to discord with your app's token
 try {
-  utils.logMessage("Attempting to log into the server...");
+  utils.logMessage("main", "Attempting to log into the server...");
   client.login(token).then(() => {
-    utils.logMessage(`Successfully logged into the server`);
+    utils.logMessage("main", `Successfully logged into the server`);
   });
 } catch {
-  utils.logMessage(`Error login into the server`);
+  utils.logMessage("main", `Error login into the server`);
 }
-
-// Esto es un filtrar usuarios y ya
 
 initializeWelcomeMessageEvent();
 
@@ -131,6 +130,7 @@ client.on("messageCreate", async (message) => {
     if (message.content.trim() !== "!acepto") {
       message.delete().catch((err) => {
         utils.logMessage(
+          "main",
           `Error al eliminar mensaje del canal de reglas: ${err}`
         );
       });
@@ -215,6 +215,7 @@ async function initializeWelcomeMessageEvent() {
     })
     .catch((r) =>
       utils.logMessage(
+        "main",
         "No se pudo inicializar mensaje de bienvenida por: " + "\n" + r
       )
     );

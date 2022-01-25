@@ -50,6 +50,7 @@ module.exports = {
       }
       if (!done)
         utils.logMessage(
+          "admin",
           "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
         );
     });

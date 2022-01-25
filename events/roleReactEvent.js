@@ -6,21 +6,25 @@ module.exports = {
    * @param {Discord.Client} client Cliente de Discord del bot
    * @param {object} reactRolesData Data de reacciones
    */
-  rolerReactAddEvent(client, reactRolesData) {
-    client.on("messageReactionAdd", async (re, us) => {
+  roleReactAddEvent(client, reactRolesData) {
+    client.on("messageReactionAdd", async (messageReaction, user) => {
+      console.log("llegue");
       if (
         reactRolesData.channelID === undefined ||
         reactRolesData.messageID === undefined ||
-        !re.message.guild ||
-        us.bot
+        !messageReaction.message.guild ||
+        user.bot
       )
         return;
 
       if (
-        reactRolesData.channelID !== re.message.channel.id ||
-        reactRolesData.messageID !== re.message.id
+        reactRolesData.channelID !== messageReaction.message.channel.id ||
+        reactRolesData.messageID !== messageReaction.message.id
       ) {
-        utils.logMessage("Ignorar reaccion");
+        utils.logMessage(
+          "roleReactAddEvent",
+          "Ignorando reacción en canal o mensaje incorrecto"
+        );
         return;
       }
 

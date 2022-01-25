@@ -48,7 +48,6 @@ module.exports = {
     ];
 
     blockRoles.forEach(async (roleID) => {
-      utils.logMessage(roleID);
       var denyRole = {
         id: roleID,
         deny: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
@@ -72,7 +71,7 @@ module.exports = {
       message.author
         .send("No se pudo crear el grupo por excepcion, revisa consola.")
         .catch((err) => {});
-      utils.logMessage("Problema grupo\n" + err);
+      utils.logMessage("createGroup", "Problema grupo\n" + err);
     });
   },
 };

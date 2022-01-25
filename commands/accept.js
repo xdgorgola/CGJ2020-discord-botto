@@ -13,7 +13,8 @@ module.exports = {
   async execute(message, args, entry_channel_id, accepted_id, adminRoleID) {
     if (message.channel.id !== entry_channel_id) {
       utils.logMessage(
-        `acepto: Canal ${message.channel.name} no es el de reglas`
+        "accept",
+        `Canal ${message.channel.name} no es el de reglas`
       );
       return;
     }
@@ -21,11 +22,12 @@ module.exports = {
     // Caso: el usuario envió !acepto sin la cédula
     if (!args.length) {
       message.author.send("Por favor escribe !acepto (cedula)").catch((err) => {
-        utils.logMessage(`acepto: Mensaje no enviado :( Error: ${err}`);
+        utils.logMessage("accept", `Mensaje no enviado :( Error: ${err}`);
       });
       message.delete().catch((err) => {
         utils.logMessage(
-          `acepto: Mensaje de !acepto no borrado :( Error: ${err}`
+          "accept",
+          `Mensaje de !acepto no borrado :( Error: ${err}`
         );
       });
       return;
@@ -38,7 +40,8 @@ module.exports = {
     if (guildUser.roles.cache.has(accepted_id)) {
       message.delete().catch((err) => {
         utils.logMessage(
-          `acepto: Mensaje de !acepto no borrado :( Error: ${err}`
+          "accept",
+          `Mensaje de !acepto no borrado :( Error: ${err}`
         );
       });
       return;
@@ -64,6 +67,7 @@ module.exports = {
       }
       if (!done)
         utils.logMessage(
+          "accept",
           "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
         );
     });

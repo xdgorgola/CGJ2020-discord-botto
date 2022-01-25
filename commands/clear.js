@@ -31,6 +31,7 @@ module.exports = {
     }
 
     utils.logMessage(
+      "clear",
       `Intentando borrar ${amount - 1} mensajes de ${message.channel.name}`
     );
 

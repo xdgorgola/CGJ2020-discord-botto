@@ -18,6 +18,7 @@ module.exports = {
         .reply("Remember to pass the correct number of parametes!")
         .catch((r) => {
           utils.logMessage(
+            "reaction",
             "There was a problem replying the author of the mesage."
           );
         });
@@ -29,7 +30,7 @@ module.exports = {
     try {
       reactMessage = await message.channel.send(reaction_message);
     } catch (err) {
-      utils.logMessage(`Problem sending reaction message`);
+      utils.logMessage("reaction", `Problem sending reaction message`);
       await message.channel
         .send(`There was a problem setting up` + `the reaction message.`)
         .catch((err) => {});
@@ -51,15 +52,16 @@ module.exports = {
         emojiID = utils.extractIDFromCustomEmoji(args[ie]);
       } else {
         emojiID = args[ie];
-        utils.logMessage(emojiID);
+        utils.logMessage("reaction", emojiID);
       }
 
       // Reacting to the message
       try {
         await reactMessage.react(emojiID);
       } catch (err) {
-        utils.logMessage(err);
+        utils.logMessage("reaction", err);
         utils.logMessage(
+          "reaction",
           `Problem reacting with ${emojiID}.\n` + `Probably non valid emoji`
         );
         return;
@@ -71,8 +73,8 @@ module.exports = {
         // Previously fetch.
         role = message.guild.roles.resolve(args[ir]);
       } catch (error) {
-        utils.logMessage(error);
-        utils.logMessage(`${args[ir]} no es un rol valido.`);
+        utils.logMessage("reaction", error);
+        utils.logMessage("reaction", `${args[ir]} no es un rol valido.`);
         return;
       }
       message_object.reactionMap.set(emojiID, role.id);
@@ -90,7 +92,7 @@ module.exports = {
         toJsonify.datas.push({ emojiID: emoji, roleID: role });
       });
       fs.writeFile(path, JSON.stringify(toJsonify), () =>
-        utils.logMessage(`Role file created successfuly`)
+        utils.logMessage("reaction", `Role file created successfuly`)
       );
     } catch (error) {
       console.warn(

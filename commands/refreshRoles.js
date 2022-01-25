@@ -30,7 +30,10 @@ module.exports = {
     // its probably going to be an uncached msg
     const old_msg = await msgManager.fetch(dataFile.message_id);
 
-    utils.logMessage(`Old message content:\n\"${old_msg.content}\"`);
+    utils.logMessage(
+      "refreshRoles",
+      `Old message content:\n\"${old_msg.content}\"`
+    );
 
     // We set up the Roles <--> Reaction object
     reactionMessageObject.channelID = dataFile.channel_id;
@@ -53,24 +56,32 @@ module.exports = {
     // We check which reactions in the designated reaction message are
     // valid and match the Roles <--> Reaction data loaded.
     utils.logMessage(
+      "refresRolesh",
       `Reactions found in old msg: ${reactions_mnger.cache.size}`
     );
     reactions_mnger.cache.forEach((msgReact, reactID) => {
-      utils.logMessage(`Reaction emoji name: ${msgReact.emoji.name}`);
-      utils.logMessage(`Reaction custom-id: ${msgReact.emoji.id}`);
+      utils.logMessage(
+        "refresh",
+        Roles`Reaction emoji name: ${msgReact.emoji.name}`
+      );
+      utils.logMessage(
+        "refreshRoles",
+        `Reaction custom-id: ${msgReact.emoji.id}`
+      );
 
       var idToUse =
         msgReact.emoji.id != null ? msgReact.emoji.id : msgReact.emoji.name;
 
       if (reactionMessageObject.reactionMap.has(idToUse)) {
         utils.logMessage(
+          "refresRolesh",
           `Role associated: ${
             guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name
           }`
         );
         validReactions.push(msgReact);
       } else {
-        utils.logMessage(`Non valid reaction!... Removing`);
+        utils.logMessage("refreshRoles", `Non valid reaction!... Removing`);
         msgReact.remove();
       }
     });
@@ -97,7 +108,7 @@ module.exports = {
           var users = await r.users.fetch();
           reactUserMap.set(r, users);
         } catch (error) {
-          utils.logMessage(error);
+          utils.logMessage("refreshRoles", error);
         }
       })
     );

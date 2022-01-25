@@ -5,22 +5,28 @@ module.exports = {
   name: "acepto",
   description: "Acepta las reglas del servidor",
   /**
+   * @summary Comando para aceptar las reglas y entrar al resto del servidor
    * @param {Discord.Message} message Mensaje comando
    * @param {string} entry_channel_id ID canal de reglas
    * @param {string} accepted_id ID rol de entrada
    */
   async execute(message, args, entry_channel_id, accepted_id, adminRoleID) {
     if (message.channel.id !== entry_channel_id) {
-      utils.logMessage(`Canal ${message.channel.name} no es el de reglas`);
+      utils.logMessage(
+        `acepto: Canal ${message.channel.name} no es el de reglas`
+      );
       return;
     }
 
+    // Caso: el usuario envió !acepto sin la cédula
     if (!args.length) {
-      message.author.send("Por favor escribe !acepto (cedula)").catch((r) => {
-        utils.logMessage("Mensaje no enviado :(");
+      message.author.send("Por favor escribe !acepto (cedula)").catch((err) => {
+        utils.logMessage(`acepto: Mensaje no enviado :( Error: ${err}`);
       });
-      message.delete().catch((r) => {
-        utils.logMessage("Mensaje acepto no borrado");
+      message.delete().catch((err) => {
+        utils.logMessage(
+          `acepto: Mensaje de !acepto no borrado :( Error: ${err}`
+        );
       });
       return;
     }
@@ -28,10 +34,12 @@ module.exports = {
     const guild = message.guild;
     const guildUser = message.guild.members.resolve(message.author);
 
-    // No debe ser posible. Fail-Safe just in case
+    // No es posible en condiciones normales
     if (guildUser.roles.cache.has(accepted_id)) {
-      message.delete().catch((r) => {
-        utils.logMessage("Mensaje acepto no borrado");
+      message.delete().catch((err) => {
+        utils.logMessage(
+          `acepto: Mensaje de !acepto no borrado :( Error: ${err}`
+        );
       });
       return;
     }

@@ -121,16 +121,24 @@ try {
 initializeWelcomeMessageEvent();
 
 roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
-roleReactionEvent.rolerReactAddEvent(client, reactRolesData);
+roleReactionEvent.roleReactAddEvent(client, reactRolesData);
 
+// Eliminar todos los mensajes en el canal de reglas
 client.on("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
 
   if (message.channel.id === conf.entry_channel_id) {
-    if (message.content.trim() !== "!acepto") message.delete().catch((r) => {});
+    if (message.content.trim() !== "!acepto") {
+      message.delete().catch((err) => {
+        utils.logMessage(
+          `Error al eliminar mensaje del canal de reglas: ${err}`
+        );
+      });
+    }
   }
 });
 
+// Manejador principal de comandos
 client.on("messageCreate", async (message) => {
   if (
     !message.content.startsWith(prefix) ||
@@ -153,7 +161,7 @@ client.on("messageCreate", async (message) => {
         reaction_msg,
         conf.roles_table_path
       );
-  } else if (command === "acepto")
+  } else if (command === "acepto") {
     client.commands
       .get("acepto")
       .execute(
@@ -163,13 +171,13 @@ client.on("messageCreate", async (message) => {
         conf.accepted_role_id,
         conf.admin_id
       );
-  else if (command === "clear" && isAdmin)
+  } else if (command === "clear" && isAdmin) {
     client.commands.get("clear").execute(message, args, conf.admin_id);
-  else if (command == "crear_grupo" && isAdmin)
+  } else if (command == "crear_grupo" && isAdmin) {
     client.commands
       .get("crear_grupo")
       .execute(message, args, [conf.accepted_role_id, "784208251168358400"]);
-  else if (command == `refresh` && isAdmin)
+  } else if (command == `refresh` && isAdmin) {
     client.commands
       .get("refresh")
       .execute(

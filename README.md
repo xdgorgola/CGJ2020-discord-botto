@@ -35,8 +35,7 @@ Luego, crea un archivo en la carpeta [`resources`](./resources/) llamado `config
   "entry_channel_id": "<ID del canal de bienvenida>",
   "accepted_role_id": "<ID del rol a asignar a los usuarios que pasen la prueba de bienvenida>",
   "guild_id": "<ID del servidor>",
-  "scheduled_messages_channel": "<ID del canal donde se enviarán los mensajes programados>",
-  "scheduled_messages_file": "scheduled_messages.json"
+  "scheduled_messages_channel": "<ID del canal donde se enviarán los mensajes programados>"
 }
 ```
 

@@ -7,7 +7,7 @@ const fs = require("fs");
 // Project files
 const roleReactionEvent = require("./events/roleReactEvent.js");
 const conf = require("./resources/config.json");
-const scheduled_messages = require(`./resources/${conf.scheduled_messages_file}`);
+const scheduled_messages = require(`./resources/scheduledMessages.json`);
 const utils = require("./utils/utils.js");
 
 // Create a new discord client

@@ -1,16 +1,14 @@
 "use strict";
 
-const userJoinRuleEvent = require("./events/joinUserEvent.js");
-const roleReactionEvent = require("./events/roleReactEvent.js");
-
-const conf = require("./resources/config.json");
-const utils = require("./utils/utils.js");
-const scheduled_messages = require(`./resources/${conf.scheduled_messages_file}`);
+// Dependencies
 const Discord = require("discord.js");
 const fs = require("fs");
 
-const prefix = conf.prefix;
-const token = conf.token;
+// Project files
+const roleReactionEvent = require("./events/roleReactEvent.js");
+const conf = require("./resources/config.json");
+const scheduled_messages = require(`./resources/${conf.scheduled_messages_file}`);
+const utils = require("./utils/utils.js");
 
 // Create a new discord client
 const Intents = Discord.Intents;
@@ -44,20 +42,6 @@ for (const file of commandFiles) {
 
   client.commands.set(command.name, command);
 }
-
-const reactRolesData = {
-  channelID: conf.roles_msg_channel,
-  messageID: conf.roles_msg_id,
-  reactionMap: new Map(),
-};
-
-// Loading messages files
-var welcome_msg = "¡Bienvenido al CGJ 2022!";
-var reaction_msg = "React here!";
-
-reaction_msg = fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
-  reaction_msg = data;
-});
 
 /** @type {Discord.Guild}*/
 var guild = undefined;
@@ -114,7 +98,8 @@ client.once("ready", () => {
   utils.logMessage("main", "Messages scheduled!");
 });
 
-// logint to discord with your app's token
+// login to discord with your app's token
+const token = conf.token;
 try {
   utils.logMessage("main", "Attempting to log into the server...");
   client.login(token).then(() => {
@@ -124,8 +109,23 @@ try {
   utils.logMessage("main", `Error login into the server`);
 }
 
-initializeWelcomeMessageEvent();
+const reactRolesData = {
+  channelID: conf.roles_msg_channel,
+  messageID: conf.roles_msg_id,
+  reactionMap: new Map(),
+};
 
+// Loading messages files
+var welcome_msg = "¡Bienvenido al CGJ 2022!";
+utils.initWelcomeMessageEvent(client, welcome_msg);
+
+var reaction_msg = "React here!";
+
+reaction_msg = utils
+  .fileToText(conf.roles_msg_path, reaction_msg)
+  .then((data) => {
+    reaction_msg = data;
+  });
 roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
 roleReactionEvent.roleReactAddEvent(client, reactRolesData);
 
@@ -146,6 +146,7 @@ client.on("messageCreate", async (message) => {
 });
 
 // Manejador principal de comandos
+const prefix = conf.prefix;
 client.on("messageCreate", async (message) => {
   if (
     !message.content.startsWith(prefix) ||
@@ -200,32 +201,3 @@ client.on("messageCreate", async (message) => {
     }
   }
 });
-
-async function fileToText(path, def_mes, fallback = true) {
-  var msg = def_mes;
-  try {
-    var prom = await fs.promises.readFile(path, {
-      encoding: "utf8",
-      flag: "r",
-    });
-    msg = prom.toString();
-  } catch (error) {
-    if (error.code != "ENOENT" || !fallback) throw error;
-  }
-  return msg;
-}
-
-async function initializeWelcomeMessageEvent() {
-  await fileToText(conf.welcome_path, welcome_msg)
-    .then((data) => {
-      welcome_msg = data;
-    })
-    .catch((r) =>
-      utils.logMessage(
-        "main",
-        "No se pudo inicializar mensaje de bienvenida por: " + "\n" + r
-      )
-    );
-
-  userJoinRuleEvent.welcomeMessageEvent(client, welcome_msg);
-}

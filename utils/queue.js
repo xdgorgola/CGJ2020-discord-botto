@@ -1,38 +1,40 @@
-const fs = require('fs');
+const fs = require("fs");
 
 module.exports = class FileWritingQueue {
-    constructor (filePath) {
-        this.filePath = filePath;
-        this.queue = []
-    }
+  constructor(filePath) {
+    this.filePath = filePath;
+    this.queue = [];
+  }
 
-    peek () {
-        if (this.queue.length === 0)
-            return undefined;
-        
-        return this.queue[0];
-    }
+  peek() {
+    if (this.queue.length === 0) return undefined;
 
-    dequeue () {
-        if (this.queue.length === 0)
-            return undefined;
-        
-        return this.queue.shift();
-    }
+    return this.queue[0];
+  }
 
-    async writeNext () {
-        if (this.queue.length === 0)
-            return;
+  dequeue() {
+    if (this.queue.length === 0) return undefined;
 
-        await fs.promises.writeFile(this.filePath, this.peek(), 'utf-8')(err => {throw err});
-        this.dequeue();
-        this.writeNext();
-    }
+    return this.queue.shift();
+  }
 
-    queueToWrite (toEnqueue) {
-        this.queue.push(toEnqueue);
-        
-        if (this.length === 1)
-            this.writeNext();
-    }
-}
+  async writeNext() {
+    if (this.queue.length === 0) return;
+
+    await fs.promises.writeFile(
+      this.filePath,
+      this.peek(),
+      "utf-8"
+    )((err) => {
+      throw err;
+    });
+    this.dequeue();
+    this.writeNext();
+  }
+
+  queueToWrite(toEnqueue) {
+    this.queue.push(toEnqueue);
+
+    if (this.length === 1) this.writeNext();
+  }
+};

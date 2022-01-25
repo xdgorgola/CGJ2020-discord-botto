@@ -8,9 +8,9 @@ module.exports = {
    * @summary Envia un mensaje a todos los admins disponibles
    * @param {Discord.Message} message Mensaje
    * @param {string[]} args Argumentos
-   * @param {string[]} blockRoles ID de roles a bloquear del grupo
+   * @param {string[]} blockRoleId ID de rol a bloquear del grupo
    */
-  async execute(message, args, blockRoles) {
+  async execute(message, args, blockRoleId) {
     if (args.length < 2) {
       await message.author
         .send("Numero incorrecto de argumentos.")
@@ -49,13 +49,11 @@ module.exports = {
       },
     ];
 
-    blockRoles.forEach(async (roleID) => {
-      var denyRole = {
-        id: roleID,
-        deny: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
-      };
-      permissions.push(denyRole);
-    });
+    var denyRole = {
+      id: blockRoleId,
+      deny: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
+    };
+    permissions.push(denyRole);
 
     users.forEach(async (user) => {
       var allowUser = {

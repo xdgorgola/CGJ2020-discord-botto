@@ -160,7 +160,7 @@ client.on("messageCreate", async (message) => {
   } else if (command == "crear_grupo" && isAdmin) {
     client.commands
       .get("crear_grupo")
-      .execute(message, args, [conf.accepted_role_id, "784208251168358400"]);
+      .execute(message, args, conf.accepted_role_id);
   } else if (command == `refresh` && isAdmin) {
     client.commands
       .get("refresh")

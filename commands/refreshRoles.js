@@ -22,10 +22,7 @@ module.exports = {
     // its probably going to be an uncached msg
     const old_msg = await msgManager.fetch(dataFile.message_id);
 
-    utils.logMessage(
-      "refreshRoles",
-      `Old message content: "${old_msg.content}"`
-    );
+    utils.logMessage("refreshRoles", `Old message content: "${old_msg.content}"`);
 
     // We set up the Roles <--> Reaction object
     reactionMessageObject.channelID = dataFile.channel_id;
@@ -34,42 +31,28 @@ module.exports = {
 
     // We load Roles <--> Reaction from .JSON on reaction_map_path
     // and generates the resulting reaction map.
-    const storageObject = JSON.parse(
-      fs.readFileSync(reactionMapPath).toString()
-    );
+    const storageObject = JSON.parse(fs.readFileSync(reactionMapPath).toString());
     storageObject.datas.forEach((obj) => {
       reactionMessageObject.reactionMap.set(obj.emojiID, obj.roleID);
     });
 
-    const reactions_mnger = old_msg.reactions;
+    const reactionsManager = old_msg.reactions;
     /** @type {Discord.MessageReaction[]} */
     var validReactions = [];
 
     // We check which reactions in the designated reaction message are
     // valid and match the Roles <--> Reaction data loaded.
-    utils.logMessage(
-      "refresRolesh",
-      `Reactions found in old msg: ${reactions_mnger.cache.size}`
-    );
-    reactions_mnger.cache.forEach((msgReact) => {
-      utils.logMessage(
-        "refreshRoles",
-        `Reaction emoji name: ${msgReact.emoji.name}`
-      );
-      utils.logMessage(
-        "refreshRoles",
-        `Reaction custom-id: ${msgReact.emoji.id}`
-      );
+    utils.logMessage("refresRolesh", `Reactions found in old msg: ${reactionsManager.cache.size}`);
+    reactionsManager.cache.forEach((msgReact) => {
+      utils.logMessage("refreshRoles", `Reaction emoji name: ${msgReact.emoji.name}`);
+      utils.logMessage("refreshRoles", `Reaction custom-id: ${msgReact.emoji.id}`);
 
-      var idToUse =
-        msgReact.emoji.id != null ? msgReact.emoji.id : msgReact.emoji.name;
+      var idToUse = msgReact.emoji.id != null ? msgReact.emoji.id : msgReact.emoji.name;
 
       if (reactionMessageObject.reactionMap.has(idToUse)) {
         utils.logMessage(
           "refresRolesh",
-          `Role associated: ${
-            guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name
-          }`
+          `Role associated: ${guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name}`
         );
         validReactions.push(msgReact);
       } else {
@@ -85,10 +68,8 @@ module.exports = {
      * @param {Discord.Role} role Role associated to the reaction
      */
     const processUser = async (user, role, reactUsers) => {
-      if (!reactUsers.has(user.id) && user.roles.cache.has(role.id))
-        user.roles.remove(role);
-      else if (reactUsers.has(user.id) && !user.roles.cache.has(role.id))
-        user.roles.add(role);
+      if (!reactUsers.has(user.id) && user.roles.cache.has(role.id)) user.roles.remove(role);
+      else if (reactUsers.has(user.id) && !user.roles.cache.has(role.id)) user.roles.add(role);
     };
 
     /** @type {Map<Discord.MessageReaction, Collection<string, Discord.User>>} */

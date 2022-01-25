@@ -14,14 +14,12 @@ module.exports = {
    */
   async execute(message, args, message_object, reaction_message, path) {
     if (args.length <= 0 || args.length % 2 !== 0) {
-      await message
-        .reply("Remember to pass the correct number of parametes!")
-        .catch((err) => {
-          utils.logMessage(
-            "reaction",
-            `There was a problem replying the author of the mesage. Problem: ${err}`
-          );
-        });
+      await message.reply("Remember to pass the correct number of parametes!").catch((err) => {
+        utils.logMessage(
+          "reaction",
+          `There was a problem replying the author of the mesage. Problem: ${err}`
+        );
+      });
       return;
     }
 

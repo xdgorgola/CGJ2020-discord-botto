@@ -21,9 +21,7 @@ module.exports = {
     // Acounting for the command message!
     const amount = Number.parseInt(args[0]) + 1;
     if (amount <= 1) {
-      await message.author
-        .send("¡Debes introducir un número valido!")
-        .catch(() => {});
+      await message.author.send("¡Debes introducir un número valido!").catch(() => {});
       return;
     }
 

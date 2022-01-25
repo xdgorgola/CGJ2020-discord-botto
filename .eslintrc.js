@@ -8,5 +8,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: "latest",
   },
-  rules: {},
+  rules: {
+    "max-len": [2, { code: 100, tabWidth: 2, ignoreUrls: true }],
+  },
 };

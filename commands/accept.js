@@ -12,10 +12,7 @@ module.exports = {
    */
   async execute(message, args, entry_channel_id, accepted_id, adminRoleID) {
     if (message.channel.id !== entry_channel_id) {
-      utils.logMessage(
-        "accept",
-        `Canal ${message.channel.name} no es el de reglas`
-      );
+      utils.logMessage("accept", `Canal ${message.channel.name} no es el de reglas`);
       return;
     }
 
@@ -25,10 +22,7 @@ module.exports = {
         utils.logMessage("accept", `Mensaje no enviado :( Error: ${err}`);
       });
       message.delete().catch((err) => {
-        utils.logMessage(
-          "accept",
-          `Mensaje de !acepto no borrado :( Error: ${err}`
-        );
+        utils.logMessage("accept", `Mensaje de !acepto no borrado :( Error: ${err}`);
       });
       return;
     }
@@ -39,10 +33,7 @@ module.exports = {
     // No es posible en condiciones normales
     if (guildUser.roles.cache.has(accepted_id)) {
       message.delete().catch((err) => {
-        utils.logMessage(
-          "accept",
-          `Mensaje de !acepto no borrado :( Error: ${err}`
-        );
+        utils.logMessage("accept", `Mensaje de !acepto no borrado :( Error: ${err}`);
       });
       return;
     }
@@ -66,18 +57,13 @@ module.exports = {
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       if (!done)
-        utils.logMessage(
-          "accept",
-          "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
-        );
+        utils.logMessage("accept", "No se pudo contactar a NINGUN ADMIN por un reporte hecho.");
     });
 
     var done = false;
     for (var i = 0; i < 5 && !done; ++i) {
       done = true;
-      await message
-        .delete({ reason: "Acepta reglas servidor" })
-        .catch(() => (done = false));
+      await message.delete({ reason: "Acepta reglas servidor" }).catch(() => (done = false));
       await new Promise((resolve) => setTimeout(resolve, 1000)).catch(() => {});
     }
   },

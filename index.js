@@ -34,9 +34,7 @@ client.commands = new Discord.Collection();
 
 // Loading commands from files and adding them to
 // the client's collection
-const commandFiles = fs
-  .readdirSync("./commands")
-  .filter((file) => file.endsWith(".js"));
+const commandFiles = fs.readdirSync("./commands").filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
@@ -77,9 +75,7 @@ client.once("ready", () => {
 
     // Set timeout to wait for 'timeToWait' milliseconds to send message
     setTimeout(() => {
-      const channel = client.channels.cache.get(
-        conf.scheduled_messages_channel
-      );
+      const channel = client.channels.cache.get(conf.scheduled_messages_channel);
       channel.send(m.message + " link: " + m.link);
     }, timeToWait);
   }
@@ -97,11 +93,9 @@ var welcome_msg = "¡Bienvenido al CGJ 2022!";
 utils.initWelcomeMessageEvent(client, welcome_msg);
 
 var reaction_msg = "¡Reacciona para obtener roles aquí!";
-reaction_msg = utils
-  .fileToText(conf.roles_msg_path, reaction_msg)
-  .then((data) => {
-    reaction_msg = data;
-  });
+reaction_msg = utils.fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
+  reaction_msg = data;
+});
 roleReactionEvent.roleReactRemoveEvent(client, reactRolesData);
 roleReactionEvent.roleReactAddEvent(client, reactRolesData);
 
@@ -112,10 +106,7 @@ client.on("messageCreate", async (message) => {
   if (message.channel.id === conf.entry_channel_id) {
     if (message.content.trim() !== "!acepto") {
       message.delete().catch((err) => {
-        utils.logMessage(
-          "main",
-          `Error al eliminar mensaje del canal de reglas: ${err}`
-        );
+        utils.logMessage("main", `Error al eliminar mensaje del canal de reglas: ${err}`);
       });
     }
   }
@@ -124,12 +115,7 @@ client.on("messageCreate", async (message) => {
 // Manejador principal de comandos
 const prefix = conf.prefix;
 client.on("messageCreate", async (message) => {
-  if (
-    !message.content.startsWith(prefix) ||
-    message.author.bot ||
-    !message.guild
-  )
-    return;
+  if (!message.content.startsWith(prefix) || message.author.bot || !message.guild) return;
 
   const args = message.content.slice(prefix.length).trim().split(/\s+/);
   const command = args.shift().toLowerCase();
@@ -138,33 +124,17 @@ client.on("messageCreate", async (message) => {
   if (command == "reaction" && isAdmin) {
     client.commands
       .get("reaction")
-      .execute(
-        message,
-        args,
-        reactRolesData,
-        reaction_msg,
-        conf.roles_table_path
-      );
+      .execute(message, args, reactRolesData, reaction_msg, conf.roles_table_path);
   } else if (command === "acepto") {
     client.commands
       .get("acepto")
-      .execute(
-        message,
-        args,
-        conf.entry_channel_id,
-        conf.accepted_role_id,
-        conf.admin_id
-      );
+      .execute(message, args, conf.entry_channel_id, conf.accepted_role_id, conf.admin_id);
   } else if (command === "clear" && isAdmin) {
     client.commands.get("clear").execute(message, args);
   } else if (command == "crear_grupo" && isAdmin) {
-    client.commands
-      .get("crear_grupo")
-      .execute(message, args, conf.accepted_role_id);
+    client.commands.get("crear_grupo").execute(message, args, conf.accepted_role_id);
   } else if (command == `refresh` && isAdmin) {
-    client.commands
-      .get("refresh")
-      .execute(message, reactRolesData, conf.roles_table_path);
+    client.commands.get("refresh").execute(message, reactRolesData, conf.roles_table_path);
   } else if (command === "admin") {
     client.commands.get("admin").execute(message, args, conf.admin_id);
   }

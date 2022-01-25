@@ -12,9 +12,7 @@ module.exports = {
    */
   async execute(message, args, blockRoleId) {
     if (args.length < 2) {
-      await message.author
-        .send("Numero incorrecto de argumentos.")
-        .catch(() => {});
+      await message.author.send("Numero incorrecto de argumentos.").catch(() => {});
       return;
     }
 

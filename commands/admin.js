@@ -13,10 +13,7 @@ module.exports = {
   async execute(message, args, adminRoleID) {
     if (!args.length) {
       await message.author
-        .send(
-          "Para llamar a un admin, incluye un mensaje" +
-            "con la razon de su contacto!"
-        )
+        .send("Para llamar a un admin, incluye un mensaje con la razon de su contacto!")
         .catch(() => {});
       return;
     }
@@ -38,20 +35,13 @@ module.exports = {
       for (var i = 0; i < 4 && !done; ) {
         done = true;
         await guildMember
-          .send(
-            `El usuario` +
-              ` **${author}** ` +
-              `solicita un admin por:\n${reason}`
-          )
+          .send(`El usuario` + ` **${author}** ` + `solicita un admin por:\n${reason}`)
           .catch(() => (done = false));
 
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       if (!done)
-        utils.logMessage(
-          "admin",
-          "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
-        );
+        utils.logMessage("admin", "No se pudo contactar a NINGUN ADMIN por un reporte hecho.");
     });
   },
 };

@@ -21,10 +21,7 @@ module.exports = {
         reactRolesData.channelID !== messageReaction.message.channel.id ||
         reactRolesData.messageID !== messageReaction.message.id
       ) {
-        utils.logMessage(
-          "roleReactAddEvent",
-          "Ignorando reacción en canal o mensaje incorrecto"
-        );
+        utils.logMessage("roleReactAddEvent", "Ignorando reacción en canal o mensaje incorrecto");
         return;
       }
 
@@ -47,9 +44,7 @@ module.exports = {
           return;
         }
 
-        await messageReaction.message.guild.members.cache
-          .get(user.id)
-          .roles.add(role);
+        await messageReaction.message.guild.members.cache.get(user.id).roles.add(role);
 
         utils.logMessage("roleReactAddEvent", reactRolesData.channelID);
         utils.logMessage("roleReactAddEvent", reactRolesData.messageID);
@@ -96,14 +91,9 @@ module.exports = {
         roleToRemove = validReactions.get(messageReaction.emoji.id);
       else roleToRemove = validReactions.get(messageReaction.emoji.toString());
 
-      utils.logMessage(
-        "roleReactRemoveEvent",
-        messageReaction.emoji.toString()
-      );
+      utils.logMessage("roleReactRemoveEvent", messageReaction.emoji.toString());
 
-      await messageReaction.message.guild.members.cache
-        .get(user.id)
-        .roles.remove(roleToRemove);
+      await messageReaction.message.guild.members.cache.get(user.id).roles.remove(roleToRemove);
     });
   },
 };

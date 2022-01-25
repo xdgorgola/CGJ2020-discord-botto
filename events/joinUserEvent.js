@@ -12,10 +12,7 @@ module.exports = {
       welcome += welcome_msg;
 
       await guildUser.send(welcome).catch((err) => {
-        utils.logMessage(
-          "guildMemberAdd",
-          "Intentar mandar mensajes a los admins!"
-        );
+        utils.logMessage("guildMemberAdd", "Intentar mandar mensajes a los admins!");
       });
     });
   },

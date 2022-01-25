@@ -32,65 +32,78 @@ module.exports = {
         const validReactions = reactRolesData.reactionMap;
         var roleIDToAdd = null;
 
-        if (re.emoji.id != null) roleIDToAdd = validReactions.get(re.emoji.id);
-        else roleIDToAdd = validReactions.get(re.emoji.toString());
+        if (messageReaction.emoji.id != null)
+          roleIDToAdd = validReactions.get(messageReaction.emoji.id);
+        else roleIDToAdd = validReactions.get(messageReaction.emoji.toString());
 
-        var role = re.message.guild.roles.cache.get(roleIDToAdd);
+        var role = messageReaction.message.guild.roles.cache.get(roleIDToAdd);
 
         if (!role) {
-          utils.logMessage("Wrong emoji!");
-          await re.remove();
+          utils.logMessage(
+            "roleReactAddEvent",
+            `Emoji incorrecto (${messageReaction.emoji.toString()})`
+          );
+          await messageReaction.remove();
           return;
         }
 
-        await re.message.guild.member(us).roles.add(role);
+        await messageReaction.message.guild.members.cache
+          .get(user.id)
+          .roles.add(role);
 
-        utils.logMessage(reactRolesData.channelID);
-        utils.logMessage(reactRolesData.messageID);
+        utils.logMessage("roleReactAddEvent", reactRolesData.channelID);
+        utils.logMessage("roleReactAddEvent", reactRolesData.messageID);
       } catch (error) {
-        await re.users.remove(us);
-        await us.send(
-          "Hola! Mi bot se crasheo :( ...\n" +
-            "¿Podrías mandarme un dm para solventarlo?\n" +
-            "PD: Soy nuevo haciendo bots.\nAtt~ Gorgola"
+        await messageReaction.users.remove(user);
+        await user.send(
+          "Hola! El bot se crasheó :( ...\n" +
+            "¿Podrías mandarnos un dm para solventarlo?\n" +
+            "\nAtt~ Organizadores del Caracas Game Jam"
         );
       }
     });
   },
+
   /**
    * @param {Discord.Client} client Cliente de Discord del bot
    * @param {object} reactRolesData Data de reacciones
    */
   roleReactRemoveEvent(client, reactRolesData) {
-    client.on("messageReactionRemove", async (re, us) => {
+    client.on("messageReactionRemove", async (messageReaction, user) => {
       if (
         !reactRolesData.channelID ||
         !reactRolesData.messageID ||
-        !re.message.guild ||
-        us.bot
+        !messageReaction.message.guild ||
+        user.bot
       )
         return;
 
       if (
-        reactRolesData.channelID !== re.message.channel.id ||
-        reactRolesData.messageID !== re.message.id
+        reactRolesData.channelID !== messageReaction.message.channel.id ||
+        reactRolesData.messageID !== messageReaction.message.id
       ) {
-        utils.logMessage("Ignorar reaccion");
+        utils.logMessage(
+          "roleReactRemoveEvent",
+          "Ignorando reacción en canal o mensaje incorrecto"
+        );
         return;
       }
 
       const validReactions = reactRolesData.reactionMap;
       var roleToRemove = null;
 
-      if (re.emoji.id != null) roleToRemove = validReactions.get(re.emoji.id);
-      else roleToRemove = validReactions.get(re.emoji.toString());
+      if (messageReaction.emoji.id != null)
+        roleToRemove = validReactions.get(messageReaction.emoji.id);
+      else roleToRemove = validReactions.get(messageReaction.emoji.toString());
 
-      utils.logMessage(re.emoji.toString());
+      utils.logMessage(
+        "roleReactRemoveEvent",
+        messageReaction.emoji.toString()
+      );
 
-      await re.message.guild.member(us).roles.remove(roleToRemove);
-
-      utils.logMessage(reactRolesData.channelID);
-      utils.logMessage(reactRolesData.messageID);
+      await messageReaction.message.guild.members.cache
+        .get(user.id)
+        .roles.remove(roleToRemove);
     });
   },
 };

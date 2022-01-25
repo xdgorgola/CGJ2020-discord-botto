@@ -75,11 +75,6 @@ module.exports = {
       }
     });
 
-    //const reactPromArray = validReactions.map(r => {
-    //    return new Promise(resolve => resolve(userFromReact(r)));
-    //});
-    //await Promise.all(reactPromArray);
-
     /**
      * @summary Adds/removes a role associated to a reaction from an user if it is needed
      * @param {Discord.GuildMember} user User to process
@@ -110,10 +105,8 @@ module.exports = {
     const guildUsers = guild.members.cache;
     guildUsers.forEach((gUser, userID) => {
       if (gUser.user.bot) return;
-      //utils.logMessage("Usuario " + gUser.user.username);
       validReactions.forEach((r) => {
         var idToUse = r.emoji.id != null ? r.emoji.id : r.emoji.name;
-        //utils.logMessage(guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name);
         processUser(
           gUser,
           guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)),

@@ -49,8 +49,6 @@ module.exports = {
       var emojiID = -1;
       if (utils.isCustomEmoji(args[ie])) {
         emojiID = utils.extractIDFromCustomEmoji(args[ie]);
-        //await message.channel.send("Custom emoji ID: " + emojiID).catch(err => {});
-        //await message.channel.send(args[ie]).catch(err => {});
       } else {
         emojiID = args[ie];
         utils.logMessage(emojiID);
@@ -64,22 +62,17 @@ module.exports = {
         utils.logMessage(
           `Problem reacting with ${emojiID}.\n` + `Probably non valid emoji`
         );
-        //await message.channel.send(`Problem reacting with ${emojiID}.\n` +
-        //`Probably non valid emoji`).catch(err => {});
         return;
       }
 
       // Extracting role from message
       var role = null;
       try {
-        //await message.channel.send("Role ID: " + args[ir]).catch(err => {});
         // Previously fetch.
         role = message.guild.roles.resolve(args[ir]);
-        //await message.channel.send("Role name: " + role.name).catch(err => {});
       } catch (error) {
         utils.logMessage(error);
         utils.logMessage(`${args[ir]} no es un rol valido.`);
-        //await message.channel.send(`${args[ir]} no es un rol valido.`).catch(err => {});
         return;
       }
       message_object.reactionMap.set(emojiID, role.id);

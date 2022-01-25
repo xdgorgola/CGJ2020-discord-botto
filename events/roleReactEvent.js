@@ -82,8 +82,6 @@ module.exports = {
       else roleToRemove = validReactions.get(re.emoji.toString());
 
       utils.logMessage(re.emoji.toString());
-      //await re.message.channel.send("Emoji string: " + re.emoji.toString());
-      //await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
 
       await re.message.guild.member(us).roles.remove(roleToRemove);
 

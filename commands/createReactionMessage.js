@@ -45,8 +45,8 @@ module.exports = {
 
       // Extracting emoji from message.
       var emojiID = -1;
-      if (utils.isCustom(args[ie])) {
-        emojiID = utils.extractCustomID(args[ie]);
+      if (utils.isCustomEmoji(args[ie])) {
+        emojiID = utils.extractIDFromCustomEmoji(args[ie]);
         //await message.channel.send("Custom emoji ID: " + emojiID).catch(err => {});
         //await message.channel.send(args[ie]).catch(err => {});
       } else {

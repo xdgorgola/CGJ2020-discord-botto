@@ -45,7 +45,7 @@ const reactRolesData = {
 };
 
 // Loading messages files
-var welcome_msg = "Welcome!";
+var welcome_msg = "¡Bienvenido al CGJ 2022!";
 var reaction_msg = "React here!";
 
 reaction_msg = fileToText(conf.roles_msg_path, reaction_msg).then((data) => {
@@ -107,12 +107,14 @@ client.once("ready", () => {
       channel.send(m.message + " link: " + m.link);
     }, timeToWait);
   }
+  console.log("Messages scheduled!");
 });
 
 // logint to discord with your app's token
 try {
-  client.login(token).then((trash) => {});
-  console.log(`Successfully logged into the server`);
+  client.login(token).then((_) => {
+    console.log(`Successfully logged into the server`);
+  });
 } catch {
   console.log(`Error login into the server`);
 }

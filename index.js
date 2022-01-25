@@ -13,8 +13,15 @@ const prefix = conf.prefix;
 const token = conf.token;
 
 // Create a new discord client
+const Intents = Discord.Intents;
 const client = new Discord.Client({
   partials: ["MESSAGE", "GUILD_MEMBER", "REACTION", "USER"],
+  intents: [
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.DIRECT_MESSAGES,
+  ],
   ws: { intents: Discord.Intents.ALL },
 });
 

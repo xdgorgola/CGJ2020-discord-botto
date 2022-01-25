@@ -10,3 +10,6 @@ node_modules/
 # Resources
 resources/config.json
 package-lock.json
+
+# Misc environment files
+.vscode/

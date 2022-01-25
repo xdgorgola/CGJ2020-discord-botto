@@ -14,7 +14,7 @@ module.exports = {
     if (args.length < 2) {
       await message.author
         .send("Numero incorrecto de argumentos.")
-        .catch((err) => {});
+        .catch(() => {});
       return;
     }
 
@@ -24,7 +24,7 @@ module.exports = {
     if (users.length <= 0) {
       await message.author
         .send("Debe haber al menos un usuario para hacer el equipo.")
-        .catch((err) => {});
+        .catch(() => {});
       return;
     }
 
@@ -70,7 +70,7 @@ module.exports = {
     ]).catch((err) => {
       message.author
         .send("No se pudo crear el grupo por excepcion, revisa consola.")
-        .catch((err) => {});
+        .catch(() => {});
       utils.logMessage("createGroup", "Problema grupo\n" + err);
     });
   },

@@ -51,17 +51,17 @@ module.exports = {
     const admins = guild.roles.resolve(adminRoleID).members;
     const author = message.author;
 
-    admins.forEach(async (gm, k, m) => {
+    admins.forEach(async (guildMember) => {
       var done = false;
       for (var i = 0; i < 4 && !done; ) {
         done = true;
-        await gm
+        await guildMember
           .send(
             `El usuario` +
               ` **${author}** ` +
               `quiere confirmar. Su mensaje es:\n${message.content}`
           )
-          .catch((err) => (done = false));
+          .catch(() => (done = false));
 
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }
@@ -77,10 +77,8 @@ module.exports = {
       done = true;
       await message
         .delete({ reason: "Acepta reglas servidor" })
-        .catch((err) => (done = false));
-      await new Promise((resolve) => setTimeout(resolve, 1000)).catch(
-        (err) => {}
-      );
+        .catch(() => (done = false));
+      await new Promise((resolve) => setTimeout(resolve, 1000)).catch(() => {});
     }
   },
 };

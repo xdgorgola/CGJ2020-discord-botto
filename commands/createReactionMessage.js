@@ -16,10 +16,10 @@ module.exports = {
     if (args.length <= 0 || args.length % 2 !== 0) {
       await message
         .reply("Remember to pass the correct number of parametes!")
-        .catch((r) => {
+        .catch((err) => {
           utils.logMessage(
             "reaction",
-            "There was a problem replying the author of the mesage."
+            `There was a problem replying the author of the mesage. Problem: ${err}`
           );
         });
       return;
@@ -33,7 +33,7 @@ module.exports = {
       utils.logMessage("reaction", `Problem sending reaction message`);
       await message.channel
         .send(`There was a problem setting up` + `the reaction message.`)
-        .catch((err) => {});
+        .catch(() => {});
       return;
     }
 

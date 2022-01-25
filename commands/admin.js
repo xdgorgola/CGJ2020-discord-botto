@@ -18,7 +18,7 @@ module.exports = {
           "Para llamar a un admin, incluye un mensaje" +
             "con la razon de su contacto!"
         )
-        .catch((err) => {});
+        .catch(() => {});
       return;
     }
     var reason = "";
@@ -31,20 +31,20 @@ module.exports = {
         `Un admin ya fue notificado y te contactara lo mas pronto posible!` +
           `\nDisculpa las molestias.`
       )
-      .catch((err) => {});
+      .catch(() => {});
 
     const admins = guild.roles.resolve(adminRoleID).members;
-    admins.forEach(async (gm, k, m) => {
+    admins.forEach(async (guildMember) => {
       var done = false;
       for (var i = 0; i < 4 && !done; ) {
         done = true;
-        await gm
+        await guildMember
           .send(
             `El usuario` +
               ` **${author}** ` +
               `solicita un admin por:\n${reason}`
           )
-          .catch((err) => (done = false));
+          .catch(() => (done = false));
 
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }

@@ -30,32 +30,44 @@ const client = new Discord.Client({
   ws: { intents: Discord.Intents.ALL },
 });
 
-/** @type {Discord.Collection} */
 client.commands = new Discord.Collection();
 
-// Loading command files
+// Loading commands from files and adding them to
+// the client's collection
 const commandFiles = fs
   .readdirSync("./commands")
   .filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
-
   client.commands.set(command.name, command);
 }
 
-/** @type {Discord.Guild}*/
+// Logging into Discord with the config's token
+const token = conf.token;
+try {
+  utils.logMessage("main", "Attempting to log into the server...");
+
+  client.login(token).then(() => {
+    utils.logMessage("main", `Successfully logged into the server`);
+  });
+} catch {
+  utils.logMessage("main", `Error login into the server!`);
+}
+
 var guild = undefined;
-/** @type {Discord.RoleManager}*/
 var guildRoleManager = undefined;
-/** @type {Map}*/
 var mainRolesMap = new Map();
 
-// once client is ready, log Ready!
+// Once client is ready, we start everything!
 client.once("ready", () => {
-  utils.logMessage("main", "Ready!");
+  utils.logMessage("main", "Client ready!");
+
+  utils.logMessage;
   const tempMainRoles = require("./resources/main_roles.json");
   guild = client.guilds.resolve(conf.guild_id);
   guildRoleManager = guild.roles;
+
+  // TODO(andres): do we need this?
   for (const mainRole of tempMainRoles.data) {
     mainRole.role_data.role = guildRoleManager.resolve(
       mainRole.role_data.role_id
@@ -80,11 +92,7 @@ client.once("ready", () => {
 
     utils.logMessage(
       "main",
-      "   * Scheduling message '\u001b[36m" +
-        m.title +
-        "\u001b[0m' to \u001b[32m" +
-        m.date +
-        "\u001b[0m"
+      `  * Scheduling message '\u001b[36m${m.title}\u001b[0m' to \u001b[32m${m.date}\u001b[0m`
     );
 
     // Set timeout to wait for 'timeToWait' milliseconds to send message
@@ -98,17 +106,6 @@ client.once("ready", () => {
   utils.logMessage("main", "Messages scheduled!");
 });
 
-// login to discord with your app's token
-const token = conf.token;
-try {
-  utils.logMessage("main", "Attempting to log into the server...");
-  client.login(token).then(() => {
-    utils.logMessage("main", `Successfully logged into the server`);
-  });
-} catch {
-  utils.logMessage("main", `Error login into the server`);
-}
-
 const reactRolesData = {
   channelID: conf.roles_msg_channel,
   messageID: conf.roles_msg_id,
@@ -119,8 +116,7 @@ const reactRolesData = {
 var welcome_msg = "¡Bienvenido al CGJ 2022!";
 utils.initWelcomeMessageEvent(client, welcome_msg);
 
-var reaction_msg = "React here!";
-
+var reaction_msg = "¡Reacciona para obtener roles aquí!";
 reaction_msg = utils
   .fileToText(conf.roles_msg_path, reaction_msg)
   .then((data) => {
@@ -180,7 +176,7 @@ client.on("messageCreate", async (message) => {
         conf.admin_id
       );
   } else if (command === "clear" && isAdmin) {
-    client.commands.get("clear").execute(message, args, conf.admin_id);
+    client.commands.get("clear").execute(message, args);
   } else if (command == "crear_grupo" && isAdmin) {
     client.commands
       .get("crear_grupo")
@@ -188,13 +184,7 @@ client.on("messageCreate", async (message) => {
   } else if (command == `refresh` && isAdmin) {
     client.commands
       .get("refresh")
-      .execute(
-        message,
-        conf.roles_msg_id,
-        conf.roles_msg_channel,
-        reactRolesData,
-        conf.roles_table_path
-      );
+      .execute(message, reactRolesData, conf.roles_table_path);
   } else if (command === "admin") {
     if (guild.member(message.author)) {
       client.commands.get("admin").execute(message, args, conf.admin_id, guild);

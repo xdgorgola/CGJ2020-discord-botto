@@ -2,7 +2,7 @@ const Discord = require("discord.js");
 const fs = require("fs");
 
 const conf = require("../resources/config.json");
-const userJoinRuleEvent = require("./events/joinUserEvent.js");
+const userJoinRuleEvent = require("../events/joinUserEvent.js");
 
 module.exports = {
   /**

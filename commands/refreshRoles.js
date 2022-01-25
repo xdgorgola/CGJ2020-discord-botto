@@ -10,16 +10,8 @@ module.exports = {
    * @param {object} reactionMessageObject
    * @param {Discord.Message} message
    * @param {string} reactionMapPath
-   * @param {string} messageID
-   * @param {string} channelID
    */
-  async execute(
-    message,
-    messageID,
-    channelID,
-    reactionMessageObject,
-    reactionMapPath
-  ) {
+  async execute(message, reactionMessageObject, reactionMapPath) {
     const guild = message.guild;
     const guildRoles = guild.roles.cache;
     const dataFile = require("../" + reactionMapPath);
@@ -32,7 +24,7 @@ module.exports = {
 
     utils.logMessage(
       "refreshRoles",
-      `Old message content:\n\"${old_msg.content}\"`
+      `Old message content: "${old_msg.content}"`
     );
 
     // We set up the Roles <--> Reaction object
@@ -59,10 +51,10 @@ module.exports = {
       "refresRolesh",
       `Reactions found in old msg: ${reactions_mnger.cache.size}`
     );
-    reactions_mnger.cache.forEach((msgReact, reactID) => {
+    reactions_mnger.cache.forEach((msgReact) => {
       utils.logMessage(
-        "refresh",
-        Roles`Reaction emoji name: ${msgReact.emoji.name}`
+        "refreshRoles",
+        `Reaction emoji name: ${msgReact.emoji.name}`
       );
       utils.logMessage(
         "refreshRoles",
@@ -114,7 +106,7 @@ module.exports = {
     );
 
     const guildUsers = guild.members.cache;
-    guildUsers.forEach((gUser, userID) => {
+    guildUsers.forEach((gUser) => {
       if (gUser.user.bot) return;
       validReactions.forEach((r) => {
         var idToUse = r.emoji.id != null ? r.emoji.id : r.emoji.name;

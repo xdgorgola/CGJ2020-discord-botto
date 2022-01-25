@@ -1,32 +1,32 @@
 {
-    "data": [
-        {
-            "name": "programador",
-            "role_data": {
-                "search_role_id": "773704935199866920",
-                "role_id": "761840652001869844"
-            }
-        },
-        {
-            "name": "artista",
-            "role_data": {
-                "search_role_id": "773704933873549324",
-                "role_id": "761840354424913930"
-            }
-        },
-        {
-            "name": "compositor",
-            "role_data": {
-                "search_role_id": "773705156255547392",
-                "role_id": "761840722709053460"
-            }
-        },
-        {
-            "name": "designer",
-            "role_data": {
-                "search_role_id": "773705187558686731",
-                "role_id": "762033794135752715"
-            }
-        }
-    ]
+  "data": [
+    {
+      "name": "programador",
+      "role_data": {
+        "search_role_id": "773704935199866920",
+        "role_id": "761840652001869844"
+      }
+    },
+    {
+      "name": "artista",
+      "role_data": {
+        "search_role_id": "773704933873549324",
+        "role_id": "761840354424913930"
+      }
+    },
+    {
+      "name": "compositor",
+      "role_data": {
+        "search_role_id": "773705156255547392",
+        "role_id": "761840722709053460"
+      }
+    },
+    {
+      "name": "designer",
+      "role_data": {
+        "search_role_id": "773705187558686731",
+        "role_id": "762033794135752715"
+      }
+    }
+  ]
 }

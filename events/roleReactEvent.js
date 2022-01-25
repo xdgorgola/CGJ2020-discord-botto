@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
   /**
@@ -19,7 +20,7 @@ module.exports = {
         reactRolesData.channelID !== re.message.channel.id ||
         reactRolesData.messageID !== re.message.id
       ) {
-        console.log("Ignorar reaccion");
+        utils.logMessage("Ignorar reaccion");
         return;
       }
 
@@ -32,20 +33,16 @@ module.exports = {
 
         var role = re.message.guild.roles.cache.get(roleIDToAdd);
 
-        //console.log(re.emoji.toString());
-        //await re.message.channel.send("Emoji string: " + re.emoji.toString());
-        //await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
-
         if (!role) {
-          console.log("Wrong emoji!");
+          utils.logMessage("Wrong emoji!");
           await re.remove();
           return;
         }
 
         await re.message.guild.member(us).roles.add(role);
 
-        console.log(reactRolesData.channelID);
-        console.log(reactRolesData.messageID);
+        utils.logMessage(reactRolesData.channelID);
+        utils.logMessage(reactRolesData.messageID);
       } catch (error) {
         await re.users.remove(us);
         await us.send(
@@ -74,7 +71,7 @@ module.exports = {
         reactRolesData.channelID !== re.message.channel.id ||
         reactRolesData.messageID !== re.message.id
       ) {
-        console.log("Ignorar reaccion");
+        utils.logMessage("Ignorar reaccion");
         return;
       }
 
@@ -84,14 +81,14 @@ module.exports = {
       if (re.emoji.id != null) roleToRemove = validReactions.get(re.emoji.id);
       else roleToRemove = validReactions.get(re.emoji.toString());
 
-      console.log(re.emoji.toString());
+      utils.logMessage(re.emoji.toString());
       //await re.message.channel.send("Emoji string: " + re.emoji.toString());
       //await re.message.channel.send("Reaction emoji ID: " + re.emoji.id);
 
       await re.message.guild.member(us).roles.remove(roleToRemove);
 
-      console.log(reactRolesData.channelID);
-      console.log(reactRolesData.messageID);
+      utils.logMessage(reactRolesData.channelID);
+      utils.logMessage(reactRolesData.messageID);
     });
   },
 };

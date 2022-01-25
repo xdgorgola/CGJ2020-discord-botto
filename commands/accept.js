@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
   name: "acepto",
@@ -10,16 +11,16 @@ module.exports = {
    */
   async execute(message, args, entry_channel_id, accepted_id, adminRoleID) {
     if (message.channel.id !== entry_channel_id) {
-      console.log(`Canal ${message.channel.name} no es el de reglas`);
+      utils.logMessage(`Canal ${message.channel.name} no es el de reglas`);
       return;
     }
 
     if (!args.length) {
       message.author.send("Por favor escribe !acepto (cedula)").catch((r) => {
-        console.log("Mensaje no enviado :(");
+        utils.logMessage("Mensaje no enviado :(");
       });
       message.delete().catch((r) => {
-        console.log("Mensaje acepto no borrado");
+        utils.logMessage("Mensaje acepto no borrado");
       });
       return;
     }
@@ -30,7 +31,7 @@ module.exports = {
     // No debe ser posible. Fail-Safe just in case
     if (guildUser.roles.cache.has(accepted_id)) {
       message.delete().catch((r) => {
-        console.log("Mensaje acepto no borrado");
+        utils.logMessage("Mensaje acepto no borrado");
       });
       return;
     }
@@ -54,7 +55,7 @@ module.exports = {
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       if (!done)
-        console.log(
+        utils.logMessage(
           "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
         );
     });

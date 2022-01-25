@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
   name: "admin",
@@ -48,7 +49,7 @@ module.exports = {
         if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
       }
       if (!done)
-        console.log(
+        utils.logMessage(
           "No se pudo contactar a NINGUN ADMIN por un reporte hecho."
         );
     });

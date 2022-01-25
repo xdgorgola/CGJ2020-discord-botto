@@ -63,7 +63,7 @@ var mainRolesMap = new Map();
 
 // once client is ready, log Ready!
 client.once("ready", () => {
-  console.log("Ready!");
+  utils.logMessage("Ready!");
   const tempMainRoles = require("./resources/main_roles.json");
   guild = client.guilds.resolve(conf.guild_id);
   guildRoleManager = guild.roles;
@@ -82,7 +82,7 @@ client.once("ready", () => {
   // Set up scheduled messages
   if (!conf.scheduled_messages_channel) return;
 
-  console.log("Scheduling messages:");
+  utils.logMessage("Scheduling messages:");
   for (const m of scheduled_messages.messages) {
     // milliseconds between scheduled date and now
     const timeToWait = new Date(m.date) - Date.now();
@@ -91,7 +91,7 @@ client.once("ready", () => {
       // message already send or scheduled to some time in the past
       continue;
 
-    console.log(
+    utils.logMessage(
       "   * Scheduling message '\u001b[36m" +
         m.title +
         "\u001b[0m' to \u001b[32m" +
@@ -107,16 +107,17 @@ client.once("ready", () => {
       channel.send(m.message + " link: " + m.link);
     }, timeToWait);
   }
-  console.log("Messages scheduled!");
+  utils.logMessage("Messages scheduled!");
 });
 
 // logint to discord with your app's token
 try {
-  client.login(token).then((_) => {
-    console.log(`Successfully logged into the server`);
+  utils.logMessage("Attempting to log into the server...");
+  client.login(token).then(() => {
+    utils.logMessage(`Successfully logged into the server`);
   });
 } catch {
-  console.log(`Error login into the server`);
+  utils.logMessage(`Error login into the server`);
 }
 
 // Esto es un filtrar usuarios y ya
@@ -230,7 +231,7 @@ async function initializeWelcomeMessageEvent() {
       welcome_msg = data;
     })
     .catch((r) =>
-      console.log(
+      utils.logMessage(
         "No se pudo inicializar mensaje de bienvenida por: " + "\n" + r
       )
     );

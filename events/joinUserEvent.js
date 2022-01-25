@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
   /**
@@ -11,7 +12,7 @@ module.exports = {
       welcome += welcome_msg;
 
       await guildUser.send(welcome).catch((err) => {
-        console.log("Intentar mandar mensajes a los admins!");
+        utils.logMessage("Intentar mandar mensajes a los admins!");
       });
     });
   },

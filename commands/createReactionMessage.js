@@ -17,7 +17,9 @@ module.exports = {
       await message
         .reply("Remember to pass the correct number of parametes!")
         .catch((r) => {
-          console.log("There was a problem replying the author of the mesage.");
+          utils.logMessage(
+            "There was a problem replying the author of the mesage."
+          );
         });
       return;
     }
@@ -27,7 +29,7 @@ module.exports = {
     try {
       reactMessage = await message.channel.send(reaction_message);
     } catch (err) {
-      console.log(`Problem sending reaction message`);
+      utils.logMessage(`Problem sending reaction message`);
       await message.channel
         .send(`There was a problem setting up` + `the reaction message.`)
         .catch((err) => {});
@@ -51,15 +53,15 @@ module.exports = {
         //await message.channel.send(args[ie]).catch(err => {});
       } else {
         emojiID = args[ie];
-        console.log(emojiID);
+        utils.logMessage(emojiID);
       }
 
       // Reacting to the message
       try {
         await reactMessage.react(emojiID);
       } catch (err) {
-        console.log(err);
-        console.log(
+        utils.logMessage(err);
+        utils.logMessage(
           `Problem reacting with ${emojiID}.\n` + `Probably non valid emoji`
         );
         //await message.channel.send(`Problem reacting with ${emojiID}.\n` +
@@ -75,8 +77,8 @@ module.exports = {
         role = message.guild.roles.resolve(args[ir]);
         //await message.channel.send("Role name: " + role.name).catch(err => {});
       } catch (error) {
-        console.log(error);
-        console.log(`${args[ir]} no es un rol valido.`);
+        utils.logMessage(error);
+        utils.logMessage(`${args[ir]} no es un rol valido.`);
         //await message.channel.send(`${args[ir]} no es un rol valido.`).catch(err => {});
         return;
       }
@@ -95,7 +97,7 @@ module.exports = {
         toJsonify.datas.push({ emojiID: emoji, roleID: role });
       });
       fs.writeFile(path, JSON.stringify(toJsonify), () =>
-        console.log(`Role file created successfuly`)
+        utils.logMessage(`Role file created successfuly`)
       );
     } catch (error) {
       console.warn(

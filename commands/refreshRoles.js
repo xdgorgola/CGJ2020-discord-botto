@@ -1,6 +1,7 @@
 const { default: Collection } = require("@discordjs/collection");
 const Discord = require("discord.js");
 const fs = require("fs");
+const utils = require("../utils/utils");
 
 module.exports = {
   name: "refresh",
@@ -29,7 +30,7 @@ module.exports = {
     // its probably going to be an uncached msg
     const old_msg = await msgManager.fetch(dataFile.message_id);
 
-    console.log(`Old message content:\n\"${old_msg.content}\"`);
+    utils.logMessage(`Old message content:\n\"${old_msg.content}\"`);
 
     // We set up the Roles <--> Reaction object
     reactionMessageObject.channelID = dataFile.channel_id;
@@ -51,23 +52,25 @@ module.exports = {
 
     // We check which reactions in the designated reaction message are
     // valid and match the Roles <--> Reaction data loaded.
-    console.log(`Reactions found in old msg: ${reactions_mnger.cache.size}`);
+    utils.logMessage(
+      `Reactions found in old msg: ${reactions_mnger.cache.size}`
+    );
     reactions_mnger.cache.forEach((msgReact, reactID) => {
-      console.log(`Reaction emoji name: ${msgReact.emoji.name}`);
-      console.log(`Reaction custom-id: ${msgReact.emoji.id}`);
+      utils.logMessage(`Reaction emoji name: ${msgReact.emoji.name}`);
+      utils.logMessage(`Reaction custom-id: ${msgReact.emoji.id}`);
 
       var idToUse =
         msgReact.emoji.id != null ? msgReact.emoji.id : msgReact.emoji.name;
 
       if (reactionMessageObject.reactionMap.has(idToUse)) {
-        console.log(
+        utils.logMessage(
           `Role associated: ${
             guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name
           }`
         );
         validReactions.push(msgReact);
       } else {
-        console.log(`Non valid reaction!... Removing`);
+        utils.logMessage(`Non valid reaction!... Removing`);
         msgReact.remove();
       }
     });
@@ -99,7 +102,7 @@ module.exports = {
           var users = await r.users.fetch();
           reactUserMap.set(r, users);
         } catch (error) {
-          console.log(error);
+          utils.logMessage(error);
         }
       })
     );
@@ -107,10 +110,10 @@ module.exports = {
     const guildUsers = guild.members.cache;
     guildUsers.forEach((gUser, userID) => {
       if (gUser.user.bot) return;
-      //console.log("Usuario " + gUser.user.username);
+      //utils.logMessage("Usuario " + gUser.user.username);
       validReactions.forEach((r) => {
         var idToUse = r.emoji.id != null ? r.emoji.id : r.emoji.name;
-        //console.log(guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name);
+        //utils.logMessage(guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)).name);
         processUser(
           gUser,
           guildRoles.get(reactionMessageObject.reactionMap.get(idToUse)),

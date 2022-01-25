@@ -43,4 +43,13 @@ module.exports = {
       return undefined;
     }
   },
+
+  /**
+   * Imprime en la salida estandar un mensaje con el timestamp en que se emitió
+   * @param {string} message Mensaje a registrar en los logs
+   */
+  logMessage(message) {
+    const timestamp = new Date().toUTCString();
+    console.log(`[${timestamp}] ${message}`);
+  },
 };

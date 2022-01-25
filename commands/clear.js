@@ -30,7 +30,7 @@ module.exports = {
       return;
     }
 
-    console.log(
+    utils.logMessage(
       `Intentando borrar ${amount - 1} mensajes de ${message.channel.name}`
     );
 

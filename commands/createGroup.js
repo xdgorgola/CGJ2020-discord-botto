@@ -1,4 +1,5 @@
 const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
   name: "crear_grupo",
@@ -47,7 +48,7 @@ module.exports = {
     ];
 
     blockRoles.forEach(async (roleID) => {
-      console.log(roleID);
+      utils.logMessage(roleID);
       var denyRole = {
         id: roleID,
         deny: ["VIEW_CHANNEL", "CONNECT", "SPEAK"],
@@ -71,7 +72,7 @@ module.exports = {
       message.author
         .send("No se pudo crear el grupo por excepcion, revisa consola.")
         .catch((err) => {});
-      console.log("Problema grupo\n" + err);
+      utils.logMessage("Problema grupo\n" + err);
     });
   },
 };

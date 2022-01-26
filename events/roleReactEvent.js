@@ -8,7 +8,6 @@ module.exports = {
    */
   roleReactAddEvent(client, reactRolesData) {
     client.on("messageReactionAdd", async (messageReaction, user) => {
-      console.log("llegue");
       if (
         reactRolesData.channelID === undefined ||
         reactRolesData.messageID === undefined ||

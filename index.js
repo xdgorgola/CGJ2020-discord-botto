@@ -104,7 +104,10 @@ client.on("messageCreate", async (message) => {
   if (message.author.bot || !message.guild) return;
 
   if (message.channel.id === conf.entry_channel_id) {
-    if (message.content.trim() !== "!acepto") {
+    // Únicamente eliminamos los mensajes que no empiecen por `!acepto`
+    // ya que esos se eliminan en el manejador del comando acepto
+    if (!message.content.trim().startsWith("!acepto")) {
+      utils.logMessage("main", `Eliminando mensaje del canal de reglas: ${message.conten}`);
       message.delete().catch((err) => {
         utils.logMessage("main", `Error al eliminar mensaje del canal de reglas: ${err}`);
       });

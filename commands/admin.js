@@ -11,37 +11,27 @@ module.exports = {
    * @param {string} adminRoleID Role de los admin.
    */
   async execute(message, args, adminRoleID) {
-    if (!args.length) {
-      await message.author
-        .send("Para llamar a un admin, incluye un mensaje con la razon de su contacto!")
-        .catch(() => {});
-      return;
-    }
-    var reason = "";
     const author = message.author;
 
-    reason = args.reduce((a, b) => a + " " + b);
+    if (!args.length) {
+      await author
+        .send("Para llamar a un admin, incluye un mensaje con la razon de su contacto!")
+        .catch((err) =>
+          utils.logMessage("admin", `No se pudo enviar mensaje a usuario por: ${err}`)
+        );
+      return;
+    }
 
     await author
       .send(
         `Un admin ya fue notificado y te contactará lo mas pronto posible!` +
           `\nDisculpa los inconvenientes.`
       )
-      .catch(() => {});
+      .catch((err) => utils.logMessage("admin", `No se pudo enviar mensaje a usuario por: ${err}`));
 
     const admins = message.guild.roles.resolve(adminRoleID).members;
-    admins.forEach(async (guildMember) => {
-      var done = false;
-      for (var i = 0; i < 4 && !done; ) {
-        done = true;
-        await guildMember
-          .send(`El usuario` + ` **${author}** ` + `solicita un admin por:\n${reason}`)
-          .catch(() => (done = false));
-
-        if (!done) await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-      if (!done)
-        utils.logMessage("admin", "No se pudo contactar a NINGUN ADMIN por un reporte hecho.");
-    });
+    const reason = args.reduce((a, b) => a + " " + b);
+    const messageForAdmins = `El usuario **${author}** solicita un admin por:\n${reason}`;
+    await utils.messageAdmins(admins, messageForAdmins);
   },
 };

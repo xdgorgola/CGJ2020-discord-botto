@@ -95,4 +95,42 @@ module.exports = {
 
     userJoinRuleEvent.welcomeMessageEvent(client, welcomeMessage);
   },
+
+  /**
+   * Envía un mensaje a una serie de usuarios admins
+   * @param {[Discord.GuildMember]} admins Colección de admins
+   * @param {string} message Mensaje a enviar
+   */
+  async messageAdmins(admins, message) {
+    const maxAttemptsPerAdmin = 4;
+    var couldReachAnAdmin = false;
+
+    admins.forEach(async (guildMember) => {
+      var messageSent = false;
+      for (var i = 0; i < maxAttemptsPerAdmin && !messageSent; ) {
+        messageSent = true;
+        await guildMember.send(message).catch(() => {
+          this.logMessage(
+            "messageAdmins",
+            `No se pudo enviar mensaje a admin ${guildMember.nickname}, intento ${i}`
+          );
+          messageSent = false;
+        });
+
+        // Waiting before the next attempt
+        if (!messageSent) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        } else {
+          couldReachAnAdmin = true;
+        }
+      }
+    });
+
+    if (!couldReachAnAdmin) {
+      this.logMessage(
+        "admin",
+        `No se pudo contactar a NINGÚN ADMIN por el siguiente mensaje: ${message}.`
+      );
+    }
+  },
 };

@@ -1,62 +1,58 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const utils = require("../utils/utils");
 
 module.exports = {
-    name: 'acepto',
-    description: 'Acepta las reglas del servidor',
-    /**
-     * @param {Discord.Message} message Mensaje comando
-     * @param {string} entry_channel_id ID canal de reglas
-     * @param {string} accepted_id ID rol de entrada
-     */
-    async execute(message, args, entry_channel_id, accepted_id, adminRoleID) {
-        if (message.channel.id !== entry_channel_id)
-        {
-            console.log(`Canal ${message.channel.name} no es el de reglas`);
-            return;
-        }
-        
-        if (!args.length)
-        {
-            message.author.send("Por favor escribe !acepto (cedula)").catch(r => {console.log("Mensaje no enviado :(")});
-            message.delete().catch(r => {console.log("Mensaje acepto no borrado")});
-            return;
-        }
+  name: "acepto",
+  description: "Acepta las reglas del servidor",
+  /**
+   * @summary Comando para aceptar las reglas y entrar al resto del servidor
+   * @param {Discord.Message} message Mensaje comando
+   * @param {string} entryChannelId ID canal de reglas
+   * @param {string} acceptedRoleId ID rol de entrada
+   */
+  async execute(message, args, entryChannelId, acceptedRoleId, adminRoleId) {
+    // Extrayendo información del mensaje antes de borrarlo
+    const author = message.author;
+    const content = message.content;
+    const guild = message.guild;
+    utils.logMessage("accept", `Procesando mensaje ${content}`);
 
-        const guild = message.guild;
-        const guildUser = message.guild.members.resolve(message.author);
-        
-        // No debe ser posible. Fail-Safe just in case
-        if (guildUser.roles.cache.has(accepted_id))
-        {
-            message.delete().catch(r => {console.log("Mensaje acepto no borrado")});
-            return;
-        }
-        
-        guildUser.roles.add(accepted_id);
-        const admins = guild.roles.resolve(adminRoleID).members;
-        const author = message.author;
+    if (message.channel.id !== entryChannelId) {
+      utils.logMessage("accept", `Canal ${message.channel.name} no es el de reglas`);
+      return;
+    }
 
-        admins.forEach(async (gm, k, m) => {
-            var done = false;
-            for (var i = 0; i < 4 && !done; )
-            {
-                done = true;
-                await gm.send(`El usuario` + ` **${author}** ` + 
-                `quiere confirmar. Su mensaje es:\n${message.content}`).catch(err => done = false);
-                
-                if (!done)
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-            }      
-            if (!done)
-                console.log("No se pudo contactar a NINGUN ADMIN por un reporte hecho.");
-        })
+    // Borramos el mensaje
+    utils.logMessage("accept", `Borrando mensaje ${content}`);
+    message.delete().catch((err) => {
+      utils.logMessage("accept", `Mensaje de !acepto no borrado :( Error: ${err}`);
+    });
 
-        var done = false;
-        for (var i = 0; i < 5 && !done; ++i)
-        {
-            done = true;
-            await message.delete({reason: "Acepta reglas servidor"}).catch(err => done = false);
-            await new Promise(resolve => setTimeout(resolve, 1000)).catch(err => {});
-        }
-    },
-}
+    // Caso: el usuario envió !acepto sin la cédula
+    if (!args.length) {
+      utils.logMessage("accept", `El usuario no envió su cédula`);
+      author.send("Por favor escribe !acepto (cedula)").catch((err) => {
+        utils.logMessage("accept", `Mensaje no enviado :( Error: ${err}`);
+      });
+      return;
+    }
+
+    const guildUser = guild.members.resolve(author);
+
+    // Si el usuario ya fue aceptado, no hacemos más nada (no es posible en condiciones normales)
+    if (guildUser.roles.cache.has(acceptedRoleId)) {
+      utils.logMessage("accept", `El usuario ya es un participante`);
+      return;
+    }
+
+    // Otorgamos el rol de usuario acceptado
+    guildUser.roles.add(acceptedRoleId);
+
+    // Enviamos el mensaje a los admins
+    const admins = guild.roles.resolve(adminRoleId).members;
+
+    const messageForAdmins = `El usuario **${author}** quiere confirmar. Mensaje:\n${content}`;
+    await utils.messageAdmins(admins, messageForAdmins);
+    utils.logMessage("accept", `Mensaje ${content} enviado a admins`);
+  },
+};

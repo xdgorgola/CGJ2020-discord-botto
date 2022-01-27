@@ -1,0 +1,36 @@
+{
+  "name": "cgj-discord-botto",
+  "version": "1.0.0",
+  "description": "Bot de Discord para el Caracas Game Jam",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^13.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.7.0",
+    "prettier": "^2.5.1"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "tabWidth": 2
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xdgorgola/CGJ2020-discord-botto.git"
+  },
+  "keywords": [
+    "bot",
+    "discord",
+    "ggj",
+    "cgj"
+  ],
+  "author": "Pedro Rodriguez y Andrés Ignacio Torres",
+  "bugs": {
+    "url": "https://github.com/xdgorgola/CGJ2020-discord-botto/issues"
+  },
+  "homepage": "https://github.com/xdgorgola/CGJ2020-discord-botto#readme"
+}

@@ -107,6 +107,7 @@ module.exports = {
 
     this.logMessage("messageAdmins", `Intentando contactar a los admins ${admins}`);
     admins.forEach(async (guildMember) => {
+      this.logMessage(`Intentando contactar a ${guildMember.user.tag}`);
       if (guildMember === null) return;
 
       var messageSent = false;
@@ -115,7 +116,7 @@ module.exports = {
         await guildMember.send(message).catch(() => {
           this.logMessage(
             "messageAdmins",
-            `No se pudo enviar mensaje a admin ${guildMember.nickname}, intento ${i + 1}`
+            `No se pudo enviar mensaje a admin ${guildMember.user.tag}, intento ${i + 1}`
           );
           messageSent = false;
         });
